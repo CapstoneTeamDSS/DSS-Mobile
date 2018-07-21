@@ -27,7 +27,7 @@
                 </action>
             </intent-filter>
         </activity>
-        <receiver android:name=".Time.MyBroadcastReceiver" >
+        <receiver android:name=".MainActivity$MyBroadcastReceiver" >
         </receiver>
 
     </application>

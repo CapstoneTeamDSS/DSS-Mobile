@@ -3,18 +3,23 @@ package com.example.administrator.dssproject;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.arch.persistence.room.Room;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -43,11 +48,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    final static  String TAG = "MainActivity";
+    final static String TAG = "MainActivity";
     public static FragmentManager fragmentManager;
     public static AppDatabase myAppDatabase;
     Calendar calendar;
     VideoView videoView;
+    ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         int boxId = 14;
 
         ApiData.getDataFromAPI(this, boxId);
-        /*videoView = findViewById(R.id.areaView1);
-        videoView.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-20_13:46:51.825.mp4");
+        /*videoView = findViewById(R.id.videoView);
+        videoView.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-21_16:01:28.1.mp4");
         videoView.requestFocus();
         videoView.start();*/
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -77,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new BoxFragment()).
                     addToBackStack(null).commit();
         }*/
-
 
 
 //        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScehduleId(30);
@@ -99,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         }*/
 //        //Demo play Video
 //        getLayout(scheduleListNew.get(0).getLayoutId());
-
 
 
         //Change LocalUrl//////////////////////////////
@@ -166,30 +170,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
     //**************************************************************//
     //**********************************************Supporter****************************//
 
 
-    public static void getLayout(int layoutId) {
+    public static void getLayout(int layoutId, int scheduleId) {
+        Fragment fragment;
         switch (layoutId) {
-            case 29:
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new ConstrainFragment()).
-                        addToBackStack(null).commit();
+            case 10:
+                fragment = ConstrainFragment.newInstance(scheduleId);
                 break;
             case 1:
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new Landscape16x9Fragment()).
-                        addToBackStack(null).commit();
-                break;
+
+                /*fragment = Landscape16x9Fragment.newInstance(scheduleId);
+                break;*/
             default:
+                throw new IllegalArgumentException("Unknown layout ID");
         }
+
+        MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                .addToBackStack(null).commit();
     }
-
-
 
 
     public void shouldAskPermissionWrite() {
@@ -242,12 +243,36 @@ public class MainActivity extends AppCompatActivity {
             return false;
     }
 
-    public List<MediaSrc> getAllMediaSrc(){
+    public List<MediaSrc> getAllMediaSrc() {
         List<MediaSrc> mediaSrcList = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
         return mediaSrcList;
     }
- }
+
+    public class MyBroadcastReceiver extends BroadcastReceiver {
+        private static final int INVALID_SCHEDULE_ID = -1;
+
+        public MyBroadcastReceiver() {}
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int scheduleId = intent.getIntExtra(ScheduleQueue.ARG_SCHEDULE_ID, INVALID_SCHEDULE_ID);
+            if (scheduleId == INVALID_SCHEDULE_ID) {
+                return;
+            }
+
+            //Hide ImageView
+            findViewById(R.id.iv_placeholder).setVisibility(View.GONE);
+
+            Schedule schedule = MainActivity.myAppDatabase.scheduleDAO().getASchedule(scheduleId);
+            int layoutId = schedule.getLayoutId();
+            MainActivity.getLayout(layoutId, scheduleId);
+
+//        Log.e("LayoutId: ", layoutID);
+//        Toast.makeText(context, "Alarm....", Toast.LENGTH_LONG).show();
+        }
+    }
+}
 
 //List all Schedule
         /*List<Schedule> scheduleList = MainActivity.myAppDatabase.scheduleDAO().getSchedules();

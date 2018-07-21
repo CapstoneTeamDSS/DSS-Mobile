@@ -128,10 +128,14 @@ public class ApiData {
                                 if (!checkMediaSrc){
                                     MainActivity.myAppDatabase.mediaSrcDAO().addMediaSrc(mediaSrc);
                                 }else {
-                                    if(!checkAndGetDuplicateMediaSrc(mediaSrcId).getUrl().equals(url)){
+                                    if(checkAndGetDuplicateMediaSrc(mediaSrcId).getUrl().equals(url)){
+                                        urlLocal = checkAndGetDuplicateMediaSrc(mediaSrcId).getUrlLocal();
+                                        MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrcExceptLocalUrl(mediaSrcId, titleMedia, typeId, url, extension, urlLocal, "L"  );
+                                    }else{
                                         urlLocal = "F";
                                         MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrcExceptLocalUrl(mediaSrcId, titleMedia, typeId, url, extension, urlLocal, "L"  );
                                     }
+
                                 }
                             }catch (Exception e){
                                 Log.e(TAG, e.toString());
