@@ -24,6 +24,11 @@ public interface MediaSrcDAO {
     @Update
     public void updateMediaSrc(MediaSrc mediaSrc);
 
+    @Query("UPDATE mediaSrc SET media_title = :title, media_typeID = :typeID, media_url = :url, media_extension = :extension," +
+            " media_urlLocal =:urlLocal, media_last_use =:lastUsed  WHERE media_id = :mediaSrcID")
+    public void updateMediaSrcExceptLocalUrl(int mediaSrcID, String title, int typeID, String url,
+                                             String extension, String urlLocal, String lastUsed);
+
     @Delete
     public void deleteMediaSrc(MediaSrc mediaSrc);
 
@@ -45,5 +50,7 @@ public interface MediaSrcDAO {
             " WHERE playlist_id IN (SELECT playlist_id FROM playlist " +
             " WHERE playlist_id = :id))")
     public List<MediaSrc> getMediaByPlaylistId(int id);
+
+
 
 }

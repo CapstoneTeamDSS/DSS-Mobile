@@ -122,12 +122,16 @@ public class ApiData {
                             String url = playlistItemDTO.getUrlMedia();
                             String extension = playlistItemDTO.getExtensionMedia();
                             MediaSrc mediaSrc = new MediaSrc(mediaSrcId, titleMedia, typeId, url, extension, "F", "L");
+                            String urlLocal = "";
                             try{
                                 boolean checkMediaSrc = checkDuplicateMediaSrc(mediaSrcId);
                                 if (!checkMediaSrc){
                                     MainActivity.myAppDatabase.mediaSrcDAO().addMediaSrc(mediaSrc);
                                 }else {
-                                    MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrc(mediaSrc);
+                                    if(!checkAndGetDuplicateMediaSrc(mediaSrcId).getUrl().equals(url)){
+                                        urlLocal = "F";
+                                        MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrcExceptLocalUrl(mediaSrcId, titleMedia, typeId, url, extension, urlLocal, "L"  );
+                                    }
                                 }
                             }catch (Exception e){
                                 Log.e(TAG, e.toString());
@@ -228,6 +232,17 @@ public class ApiData {
             }
         }
         return check;
+    }
+
+    public static MediaSrc checkAndGetDuplicateMediaSrc(int id){
+        MediaSrc mediaSrc = null;
+        List<MediaSrc> mediaSrcList = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
+        for (int m = 0; m < mediaSrcList.size(); m++){
+            if(id == mediaSrcList.get(m).getMediaSrcID()){
+                mediaSrc = mediaSrcList.get(m);
+            }
+        }
+        return mediaSrc;
     }
 
     public static boolean checkDuplicateMediaSrc(int id){
