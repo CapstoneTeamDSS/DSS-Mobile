@@ -22,7 +22,7 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
 
     public DownloadTask(Context context) {
         this.context = context;
-        this.mediaSrcs = mediaSrcs;
+
     }
 
     File apkStorage = null;
@@ -55,7 +55,7 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
         listMedia = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        ScheduleQueue.startSchedule(context, alarmManager);
+        ScheduleQueue.startSchedule(context, alarmManager);
 
 
         return null;

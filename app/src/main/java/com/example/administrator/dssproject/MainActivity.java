@@ -3,51 +3,52 @@ package com.example.administrator.dssproject;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.arch.persistence.room.Room;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Window;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
+import android.widget.ImageView;
 import android.widget.VideoView;
 
 import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
-import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
-import com.example.administrator.dssproject.DataBase.Playlist;
-import com.example.administrator.dssproject.DataBase.PlaylistItem;
-import com.example.administrator.dssproject.DataBase.Scenario;
-import com.example.administrator.dssproject.DataBase.ScenarioItem;
 import com.example.administrator.dssproject.DataBase.Schedule;
-import com.example.administrator.dssproject.Fragment.BoxFragment;
 import com.example.administrator.dssproject.Fragment.ConstrainFragment;
-import com.example.administrator.dssproject.Fragment.Landscape16x9Fragment;
-import com.example.administrator.dssproject.Fragment.Portriat9x16Fragment;
-import com.example.administrator.dssproject.SDCard.DownloadTask;
 import com.example.administrator.dssproject.Time.ScheduleQueue;
-import com.example.administrator.dssproject.Utils.Supporter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    final static  String TAG = "MainActivity";
+    public static final String ALARM_INTENT_FILTER_ACTION = "alarmIntentFilter";
+
+    final static String TAG = "MainActivity";
     public static FragmentManager fragmentManager;
     public static AppDatabase myAppDatabase;
     Calendar calendar;
     VideoView videoView;
+    ImageView imageView;
+
+    private final BroadcastReceiver mAlarmReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           findViewById(R.id.iv_placeholder).setVisibility(View.GONE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
         int boxId = 14;
 
         ApiData.getDataFromAPI(this, boxId);
-        /*videoView = findViewById(R.id.areaView1);
-        videoView.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-20_13:46:51.825.mp4");
+        /*videoView = findViewById(R.id.videoView);
+        videoView.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-21_16:01:28.1.mp4");
         videoView.requestFocus();
         videoView.start();*/
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -77,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new BoxFragment()).
                     addToBackStack(null).commit();
         }*/
-
 
 
 //        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScehduleId(30);
@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         }*/
 //        //Demo play Video
 //        getLayout(scheduleListNew.get(0).getLayoutId());
-
 
 
         //Change LocalUrl//////////////////////////////
@@ -165,31 +164,39 @@ public class MainActivity extends AppCompatActivity {
         }*/
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mAlarmReceiver, new IntentFilter(ALARM_INTENT_FILTER_ACTION));
+    }
 
-
-
-
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mAlarmReceiver);
+    }
 
     //**************************************************************//
     //**********************************************Supporter****************************//
 
 
-    public static void getLayout(int layoutId) {
+    public static void getLayout(int layoutId, int scheduleId) {
+        Fragment fragment;
         switch (layoutId) {
-            case 29:
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new ConstrainFragment()).
-                        addToBackStack(null).commit();
+            case 10:
+                fragment = ConstrainFragment.newInstance(scheduleId);
                 break;
             case 1:
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new Landscape16x9Fragment()).
-                        addToBackStack(null).commit();
-                break;
+
+                /*fragment = Landscape16x9Fragment.newInstance(scheduleId);
+                break;*/
             default:
+                throw new IllegalArgumentException("Unknown layout ID");
         }
+
+        MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                .addToBackStack(null).commit();
     }
-
-
 
 
     public void shouldAskPermissionWrite() {
@@ -242,12 +249,12 @@ public class MainActivity extends AppCompatActivity {
             return false;
     }
 
-    public List<MediaSrc> getAllMediaSrc(){
+    public List<MediaSrc> getAllMediaSrc() {
         List<MediaSrc> mediaSrcList = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
         return mediaSrcList;
     }
- }
+}
 
 //List all Schedule
         /*List<Schedule> scheduleList = MainActivity.myAppDatabase.scheduleDAO().getSchedules();
