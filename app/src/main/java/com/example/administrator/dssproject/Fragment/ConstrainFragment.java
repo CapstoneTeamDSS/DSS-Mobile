@@ -23,6 +23,7 @@ import com.example.administrator.dssproject.DataBase.Schedule;
 import com.example.administrator.dssproject.MainActivity;
 import com.example.administrator.dssproject.R;
 import com.example.administrator.dssproject.Time.ScheduleQueue;
+import com.example.administrator.dssproject.Utils.ImageVideoView;
 import com.example.administrator.dssproject.Utils.Supporter;
 
 import java.util.ArrayList;
@@ -37,14 +38,14 @@ public class ConstrainFragment extends Fragment {
 
     private int mScheduleId;
     @NonNull
-    private List<String> mVideoPaths = new ArrayList<>();
-    private int mVideoIndex = 0;
+    private List<MediaSrc> mVideoPaths19 = new ArrayList<>();
+    private List<MediaSrc> mVideoPaths20 = new ArrayList<>();
 
 
-    VideoView video1;
-    VideoView video2;
-    VideoView video3;
-    VideoView video4;
+    ImageVideoView video1;
+    ImageVideoView video2;
+//    VideoView video3;
+//    VideoView video4;
 
     public static ConstrainFragment newInstance(int scheduleId) {
 
@@ -73,8 +74,8 @@ public class ConstrainFragment extends Fragment {
 
         video1 = view.findViewById(R.id.areaView1);
         video2 = view.findViewById(R.id.areaView2);
-        video3 = view.findViewById(R.id.areaView3);
-        video4 = view.findViewById(R.id.areaView4);
+//        video3 = view.findViewById(R.id.areaView3);
+//        video4 = view.findViewById(R.id.areaView4);
 
 
         int scheduleId = 32;
@@ -145,7 +146,7 @@ public class ConstrainFragment extends Fragment {
             playlistItemList19 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf19.get(i).getPlaylistId());
             for(int j = 0; j < playlistItemList19.size(); j++){
                 MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrcByPlaylistItemId(playlistItemList19.get(j).getPlaylistItemId());
-                mVideoPaths.add(mediaSrc.getUrlLocal());
+                mVideoPaths19.add(mediaSrc);
             }
         }
 
@@ -154,7 +155,7 @@ public class ConstrainFragment extends Fragment {
             playlistItemList20 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf20.get(i).getPlaylistId());
             for(int j = 0; j < playlistItemList20.size(); j++){
                 MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrcByPlaylistItemId(playlistItemList20.get(j).getPlaylistItemId());
-                localUrl20.add(mediaSrc.getUrlLocal());
+                mVideoPaths20.add(mediaSrc);
             }
         }
         /*for (int i = 0; i < playlistListOf37.size(); i++){
@@ -166,15 +167,8 @@ public class ConstrainFragment extends Fragment {
 
         //Play AreaId 19
         MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrc(playlistItemList19.get(1).getMediaSrcId());
-        String localUrl = mediaSrc.getUrlLocal();
-        video1.setOnCompletionListener(new OnVideoCompletionListener(video1));
-        video1.setVideoPath(localUrl);
-        video1.requestFocus();
-        video1.start();
-
-        video2.setVideoPath(localUrl);
-        video2.requestFocus();
-        video2.start();
+        video1.setMediaSources(playlistItemList19, mVideoPaths19);
+        video2.setMediaSources(playlistItemList20, mVideoPaths20);
 
         /*video3.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-20_13:46:51.825.mp4");
         video3.requestFocus();
@@ -191,24 +185,32 @@ public class ConstrainFragment extends Fragment {
     }
 
 
+
     private class OnVideoCompletionListener implements MediaPlayer.OnCompletionListener {
 
         private final VideoView mVideoView;
+        @NonNull
+        private List<String> mPaths;
+        private int mVideoIndex = 0;
 
-        OnVideoCompletionListener(VideoView view) {
+        OnVideoCompletionListener(VideoView view, @NonNull List<String> paths) {
             mVideoView = view;
+            mPaths = paths;
+
+            mVideoView.setVideoPath(mPaths.get(mVideoIndex++));
+            mVideoView.requestFocus();
+            mVideoView.start();
         }
 
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
-            Context context = mVideoView.getContext();
-            Toast.makeText(context, "Video has just finished", Toast.LENGTH_SHORT).show();
-            mVideoView.setVideoPath(mVideoPaths.get(mVideoIndex % mVideoPaths.size()));
-            mVideoView.start();
-            mVideoIndex++;
+            if (mVideoIndex < mPaths.size()) {
+                Context context = mVideoView.getContext();
+                Toast.makeText(context, "Video has just finished", Toast.LENGTH_SHORT).show();
+                mVideoView.setVideoPath(mPaths.get(mVideoIndex));
+                mVideoView.start();
+                mVideoIndex++;
+            }
         }
     }
-
-
-
 }

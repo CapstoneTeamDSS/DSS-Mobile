@@ -56,4 +56,8 @@ public interface MediaSrcDAO {
             " WHERE playlistItem_id = :id)")
     public MediaSrc getAMediaSrcByPlaylistItemId(int id);
 
+
+    @Query("SELECT playlistItem_duration FROM playlistItem" +
+            " WHERE media_id = :id AND playlistItem_id = :playlistItemId")
+    public long getDurationByMediaSrcId(int id, int playlistItemId);
 }

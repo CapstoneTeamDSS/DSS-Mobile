@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -23,11 +24,14 @@ import android.widget.VideoView;
 
 import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
+import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.DataBase.Schedule;
+import com.example.administrator.dssproject.Fragment.BoxFragment;
 import com.example.administrator.dssproject.Fragment.ConstrainFragment;
 import com.example.administrator.dssproject.Time.ScheduleQueue;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver mAlarmReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-           findViewById(R.id.iv_placeholder).setVisibility(View.GONE);
+            findViewById(R.id.iv_placeholder).setVisibility(View.GONE);
         }
     };
 
@@ -72,12 +76,16 @@ public class MainActivity extends AppCompatActivity {
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
+        /*List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
+            if (boxes.size() == 0) {
+                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new BoxFragment()).
+                        addToBackStack(null).commit();
+            } else {
+                ApiData.getDataFromAPI(this, boxId);
+
+            }*/
+
         //Input Boxid
-       /* List<Box> boxList = MainActivity.myAppDatabase.boxDAO().getBox();
-        if (boxList.size() == 0){
-            MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new BoxFragment()).
-                    addToBackStack(null).commit();
-        }*/
 
 
 //        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScehduleId(30);
@@ -195,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
-                .addToBackStack(null).commit();
+                .addToBackStack(null).commitAllowingStateLoss();
     }
 
 

@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.administrator.dssproject.DataBase.Schedule;
 import com.example.administrator.dssproject.MainActivity;
@@ -22,7 +23,7 @@ public class ScheduleQueue {
 
     public static void startSchedule(Context context, AlarmManager alarmManager){
 
-        List<Schedule> scheduleList = checkValidStartTime();
+        /*List<Schedule> scheduleList = checkValidStartTime();
         List<Schedule> scheduleListOrdered = scheduleListOrderStartTime(scheduleList);
         if(scheduleListOrdered.size() != 0){
             String startTime = scheduleListOrdered.get(0).getStartTime();
@@ -37,8 +38,8 @@ public class ScheduleQueue {
             }catch (ParseException e){
                 Log.e("Parse Time: ", e.toString());
             }
-        /*Bundle bundle = new Bundle();
-        bundle.putInt("SCHEDULEID", scheduleId);*/
+        *//*Bundle bundle = new Bundle();
+        bundle.putInt("SCHEDULEID", scheduleId);*//*
 
             Intent intent = new Intent(context, MyBroadcastReceiver.class);
             intent.putExtra(ARG_SCHEDULE_ID, scheduleId);
@@ -48,8 +49,18 @@ public class ScheduleQueue {
             alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + milliseconds
                     , pendingIntent);
         }else{
+            Toast.makeText(context, "There are no schedules", Toast.LENGTH_SHORT).show();
+        }*/
 
-        }
+
+        //**************TEST**************//
+        Intent intent = new Intent(context, MyBroadcastReceiver.class);
+        intent.putExtra(ARG_SCHEDULE_ID, 32);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context.getApplicationContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                , pendingIntent);
 
     }
 

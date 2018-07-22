@@ -147,7 +147,7 @@ public class ApiData {
                             int mediaSrcIdit = playlistItemDTO.getMediaSrcId();
                             int playlistIdit = scenarioItemDTO.getPlaylistId();
                             int displayOrderPlaylistItem = playlistItemDTO.getDisplayOrder();
-                            String duration = playlistItemDTO.getDuration();
+                            long duration = playlistItemDTO.getDuration();
                             PlaylistItem playlistItem = new PlaylistItem(playslistItemId, mediaSrcIdit, playlistIdit, displayOrderPlaylistItem, duration);
                             try{
                                 boolean checkPlaylistItem = checkDuplicatePlaylistItem(playslistItemId);
