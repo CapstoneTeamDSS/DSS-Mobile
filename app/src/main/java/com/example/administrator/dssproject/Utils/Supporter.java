@@ -49,7 +49,6 @@ public class Supporter {
             } else
                 Toast.makeText(context, "Oops!! There is no SD Card.", Toast.LENGTH_SHORT).show();
 
-
             if (!apkStorage.exists()) {
                 apkStorage.mkdir();
                 Log.e(TAG, "Directory Created.");
@@ -89,7 +88,7 @@ public class Supporter {
             outputFile = null;
             Log.e(TAG, "Download Error Exception " + e.getMessage());
         }
-        newUrl = pathname + downloadFileName + downloadTailFileName;
+        newUrl = pathname + "/" + downloadFileName + downloadTailFileName;
 
         return newUrl;
     }

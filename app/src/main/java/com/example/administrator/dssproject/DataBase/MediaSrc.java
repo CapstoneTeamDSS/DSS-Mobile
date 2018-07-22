@@ -45,6 +45,10 @@ public class MediaSrc {
         this.lastUsed = lastUsed;
     }
 
+    public MediaSrc() {
+
+    }
+
 
     public int getMediaSrcID() {
         return mediaSrcID;
