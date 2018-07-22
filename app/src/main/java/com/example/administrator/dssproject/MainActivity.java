@@ -6,47 +6,35 @@ import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
-import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
-import com.example.administrator.dssproject.DataBase.Playlist;
-import com.example.administrator.dssproject.DataBase.PlaylistItem;
-import com.example.administrator.dssproject.DataBase.Scenario;
-import com.example.administrator.dssproject.DataBase.ScenarioItem;
 import com.example.administrator.dssproject.DataBase.Schedule;
-import com.example.administrator.dssproject.Fragment.BoxFragment;
 import com.example.administrator.dssproject.Fragment.ConstrainFragment;
-import com.example.administrator.dssproject.Fragment.Landscape16x9Fragment;
-import com.example.administrator.dssproject.Fragment.Portriat9x16Fragment;
-import com.example.administrator.dssproject.SDCard.DownloadTask;
 import com.example.administrator.dssproject.Time.ScheduleQueue;
-import com.example.administrator.dssproject.Utils.Supporter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
+
 public class MainActivity extends AppCompatActivity {
+
+    public static final String ALARM_INTENT_FILTER_ACTION = "alarmIntentFilter";
 
     final static String TAG = "MainActivity";
     public static FragmentManager fragmentManager;
@@ -54,6 +42,13 @@ public class MainActivity extends AppCompatActivity {
     Calendar calendar;
     VideoView videoView;
     ImageView imageView;
+
+    private final BroadcastReceiver mAlarmReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           findViewById(R.id.iv_placeholder).setVisibility(View.GONE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,6 +164,17 @@ public class MainActivity extends AppCompatActivity {
         }*/
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mAlarmReceiver, new IntentFilter(ALARM_INTENT_FILTER_ACTION));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mAlarmReceiver);
+    }
 
     //**************************************************************//
     //**********************************************Supporter****************************//
@@ -247,30 +253,6 @@ public class MainActivity extends AppCompatActivity {
         List<MediaSrc> mediaSrcList = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
         return mediaSrcList;
-    }
-
-    public class MyBroadcastReceiver extends BroadcastReceiver {
-        private static final int INVALID_SCHEDULE_ID = -1;
-
-        public MyBroadcastReceiver() {}
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int scheduleId = intent.getIntExtra(ScheduleQueue.ARG_SCHEDULE_ID, INVALID_SCHEDULE_ID);
-            if (scheduleId == INVALID_SCHEDULE_ID) {
-                return;
-            }
-
-            //Hide ImageView
-            findViewById(R.id.iv_placeholder).setVisibility(View.GONE);
-
-            Schedule schedule = MainActivity.myAppDatabase.scheduleDAO().getASchedule(scheduleId);
-            int layoutId = schedule.getLayoutId();
-            MainActivity.getLayout(layoutId, scheduleId);
-
-//        Log.e("LayoutId: ", layoutID);
-//        Toast.makeText(context, "Alarm....", Toast.LENGTH_LONG).show();
-        }
     }
 }
 

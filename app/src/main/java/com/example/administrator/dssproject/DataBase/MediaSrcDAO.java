@@ -51,6 +51,9 @@ public interface MediaSrcDAO {
             " WHERE playlist_id = :id))")
     public List<MediaSrc> getMediaByPlaylistId(int id);
 
-
+    @Query("SELECT * FROM mediaSrc " +
+            " WHERE media_id IN (SELECT media_id FROM playlistItem " +
+            " WHERE playlistItem_id = :id)")
+    public MediaSrc getAMediaSrcByPlaylistItemId(int id);
 
 }

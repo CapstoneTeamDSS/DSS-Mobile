@@ -40,7 +40,7 @@ public class ScheduleQueue {
         /*Bundle bundle = new Bundle();
         bundle.putInt("SCHEDULEID", scheduleId);*/
 
-            Intent intent = new Intent(context, MainActivity.MyBroadcastReceiver.class);
+            Intent intent = new Intent(context, MyBroadcastReceiver.class);
             intent.putExtra(ARG_SCHEDULE_ID, scheduleId);
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(

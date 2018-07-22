@@ -128,9 +128,11 @@ public class ConstrainFragment extends Fragment {
         }
         for(int i = 0; i < scenarioItemList19.size(); i++){
             playlistListOf19 = MainActivity.myAppDatabase.playlistDAO().getPlaylistListByPlaylistId(scenarioItemList19.get(i).getPlaylistId());
+
         }
         for(int i = 0; i < scenarioItemList20.size(); i++){
             playlistListOf20 = MainActivity.myAppDatabase.playlistDAO().getPlaylistListByPlaylistId(scenarioItemList20.get(i).getPlaylistId());
+
         }
         /*for(int i = 0; i < scenarioItemList37.size(); i++){
             playlistListOf37 = MainActivity.myAppDatabase.playlistDAO().getPlaylistListByPlaylistId(scenarioItemList37.get(i).getPlaylistId());
@@ -138,12 +140,22 @@ public class ConstrainFragment extends Fragment {
         for(int i = 0; i < scenarioItemList38.size(); i++){
             playlistListOf38 = MainActivity.myAppDatabase.playlistDAO().getPlaylistListByPlaylistId(scenarioItemList38.get(i).getPlaylistId());
         }*/
-
+        List<String> localUrl19 = new ArrayList<String>();
         for (int i = 0; i < playlistListOf19.size(); i++){
             playlistItemList19 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf19.get(i).getPlaylistId());
+            for(int j = 0; j < playlistItemList19.size(); j++){
+                MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrcByPlaylistItemId(playlistItemList19.get(j).getPlaylistItemId());
+                mVideoPaths.add(mediaSrc.getUrlLocal());
+            }
         }
+
+        List<String> localUrl20 = new ArrayList<String>();
         for (int i = 0; i < playlistListOf20.size(); i++){
             playlistItemList20 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf20.get(i).getPlaylistId());
+            for(int j = 0; j < playlistItemList20.size(); j++){
+                MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrcByPlaylistItemId(playlistItemList20.get(j).getPlaylistItemId());
+                localUrl20.add(mediaSrc.getUrlLocal());
+            }
         }
         /*for (int i = 0; i < playlistListOf37.size(); i++){
             playlistItemList37 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf37.get(i).getPlaylistId());
@@ -152,14 +164,15 @@ public class ConstrainFragment extends Fragment {
             playlistItemList38 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf38.get(i).getPlaylistId());
         }*/
 
-        //Play AreaId 35
+        //Play AreaId 19
         MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrc(playlistItemList19.get(1).getMediaSrcId());
         String localUrl = mediaSrc.getUrlLocal();
-        video1.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-21_16:01:28.1.mp4");
+        video1.setOnCompletionListener(new OnVideoCompletionListener(video1));
+        video1.setVideoPath(localUrl);
         video1.requestFocus();
         video1.start();
 
-        video2.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-21_16:01:28.1.mp4");
+        video2.setVideoPath(localUrl);
         video2.requestFocus();
         video2.start();
 
