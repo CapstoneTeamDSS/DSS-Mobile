@@ -10,13 +10,14 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -26,14 +27,13 @@ import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
 import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
-import com.example.administrator.dssproject.DataBase.Schedule;
 import com.example.administrator.dssproject.Fragment.BoxFragment;
 import com.example.administrator.dssproject.Fragment.ConstrainFragment;
-import com.example.administrator.dssproject.Time.ScheduleQueue;
+import com.example.administrator.dssproject.Fragment.Landscape2SideFragment;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG = "MainActivity";
     public static FragmentManager fragmentManager;
     public static AppDatabase myAppDatabase;
+    private static int boxId;
     Calendar calendar;
     VideoView videoView;
     ImageView imageView;
@@ -62,14 +63,36 @@ public class MainActivity extends AppCompatActivity {
 
 
         shouldAskPermissionWrite();
-        shouldAskPermissionRead();
-        int boxId = 14;
 
-        ApiData.getDataFromAPI(this, boxId);
+        int boxId = 14;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ApiData.getDataFromAPI(MainActivity.this,14);
+            }
+        }, 10000);
+//        ApiData.getDataFromAPI(MainActivity.this,14);
+
+//        ApiData.getDataFromAPI(this,14);
+
+//        ApiData.getDataFromAPI(this, boxId);
+
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.myAppDatabase.boxDAO().getABox();
+                ApiData.getDataFromAPI(this, boxId);
+            }
+        }, 1800000);*/
         /*videoView = findViewById(R.id.videoView);
-        videoView.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-21_16:01:28.1.mp4");
-        videoView.requestFocus();
+
+        Uri uri = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.afaf1);
+        videoView.setVideoURI(uri);
         videoView.start();*/
+
+//        videoView.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-21_16:01:28.1.mp4");
+//        videoView.requestFocus();
+//        videoView.start();
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         fragmentManager = getSupportFragmentManager();
         myAppDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "dssdb")
@@ -77,99 +100,16 @@ public class MainActivity extends AppCompatActivity {
                 .allowMainThreadQueries()
                 .build();
         /*List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
-            if (boxes.size() == 0) {
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new BoxFragment()).
-                        addToBackStack(null).commit();
-            } else {
-                ApiData.getDataFromAPI(this, boxId);
-
-            }*/
-
-        //Input Boxid
-
-
-//        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScehduleId(30);
-//        List<ScenarioItem> scenarioItemList2 = Supporter.scenarioItemsSortByDisplayOrder(scenarioItemList);
-//        List<PlaylistItem> playlistItemList = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(33);
-//        List<MediaSrc> mediaSrcList = MainActivity.myAppDatabase.mediaSrcDAO().getMediaByScheduleId(30);
-
-        //Get schedule to use
-        /*List<Schedule> scheduleList = ScheduleQueue.checkValidStartTime();
-
-        List<Schedule> scheduleListNew = ScheduleQueue.scheduleListOrderStartTime(scheduleList);
-        for (Schedule item : scheduleListNew) {
-            Log.e(TAG, item.getScheduleId() + " "+
-                    item.getLayoutId()+ " "+
-                    item.getStartTime()+ " "+
-                    item.getEndTime()+ " "+
-                    item.getTitle() + " "+
-                    item.getTimesToPlay()+ " \n");
-        }*/
-//        //Demo play Video
-//        getLayout(scheduleListNew.get(0).getLayoutId());
-
-
-        //Change LocalUrl//////////////////////////////
-        /*List<MediaSrc> mediaSrcList =  MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
-        for(int i = 0; i < mediaSrcList.size(); i++){
-            mediaSrcList.get(i).setUrl("https://cdn.filestackcontent.com/Aa7YKYzJQ22PikjDFtPM");
-            Log.e(TAG, mediaSrcList.get(i).getUrl() + " " +
-                    mediaSrcList.get(i).getMediaSrcID());
-            MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrc(mediaSrcList.get(i));
-        }*/
-
-
-        /*List<MediaSrc> mediaSrcList =  MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
-        for (MediaSrc item : mediaSrcList) {
-            Log.e("MediaSrcList", item.getUrl() + " "+
-                    item.getTypeID()+ " "+
-                    item.getMediaSrcID()+ " "+
-                    item.getTitle() + " "+
-                    item.getExtension() + " "+
-                    item.getUrlLocal()+ "\n");
-        }*/
-
-        //Download Task
-//        try {
-//            new DownloadTask(this, alarmManager);
-//        }catch (Exception e){
-//            Log.e(TAG, e.toString());
-//        }
-
-
-        //Order StartTime Schedule
-        /*List<Schedule> scheduleList = ScheduleQueue.checkValidStartTime();
-
-        List<Schedule> scheduleListNew = ScheduleQueue.scheduleListOrderStartTime(scheduleList);
-        for (Schedule item : scheduleListNew) {
-            Log.e(TAG, item.getScheduleId() + " "+
-                    item.getStartTime()+ " "+
-                    item.getEndTime()+ " "+
-                    item.getTitle() + " "+
-                    item.getTimesToPlay()+ " \n");
-        }*/
-
-
-//        Toast.makeText(this, "SSSSSSSS", Toast.LENGTH_SHORT).show();
-
-        /*if(findViewById(R.id.fragment_container) != null){
-            if (savedInstanceState != null){
-                return;
-            }
-            fragmentManager.beginTransaction().add(R.id.fragment_container, new HomeLayout()).commit();
+        if (boxes.size() == 0) {
+            findViewById(R.id.iv_placeholder).setVisibility(View.GONE);
+            MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new BoxFragment()).
+                    addToBackStack(null).commitAllowingStateLoss();
+        } else {
 
         }*/
 
 
-       /* List<MediaSrc> mediaSrcList2 = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
-        for (MediaSrc item : mediaSrcList2) {
-            Log.e("MediaSrc", item.getUrl() + " " +
-                    item.getTypeID() + " " +
-                    item.getMediaSrcID() + " " +
-                    item.getTitle() + " " +
-                    item.getExtension() + " " +
-                    item.getUrlLocal() + "\n");
-        }*/
+
     }
 
     @Override
@@ -188,11 +128,25 @@ public class MainActivity extends AppCompatActivity {
     //**********************************************Supporter****************************//
 
 
+    private void scheduleApiCalls() {
+        Handler handler = new Handler();
+        for (int i = 0; i < 48; i++) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    MainActivity.myAppDatabase.boxDAO().getBoxId();
+                    ApiData.getDataFromAPI(MainActivity.this, boxId);
+                }
+            }, TimeUnit.MINUTES.toMillis(30));
+        }
+        scheduleApiCalls();
+    }
+
     public static void getLayout(int layoutId, int scheduleId) {
         Fragment fragment;
         switch (layoutId) {
             case 10:
-                fragment = ConstrainFragment.newInstance(scheduleId);
+                fragment = Landscape2SideFragment.newInstance(scheduleId);
                 break;
             case 1:
 

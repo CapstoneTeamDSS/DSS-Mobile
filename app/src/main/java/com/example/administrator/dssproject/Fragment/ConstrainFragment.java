@@ -78,7 +78,7 @@ public class ConstrainFragment extends Fragment {
 //        video4 = view.findViewById(R.id.areaView4);
 
 
-        int scheduleId = 32;
+//        int scheduleId = 32;
         /*List<ScenarioItem> scenarioItemList35 = new ArrayList<ScenarioItem>();
         List<ScenarioItem> scenarioItemList36 = new ArrayList<ScenarioItem>();
         List<ScenarioItem> scenarioItemList37 = new ArrayList<ScenarioItem>();

@@ -15,6 +15,7 @@ import android.widget.VideoView;
 
 import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.DataBase.PlaylistItem;
+import com.example.administrator.dssproject.R;
 
 import java.util.List;
 
@@ -75,14 +76,18 @@ public class ImageVideoView extends FrameLayout {
     }
 
     private void showNextMedia() {
-        if (mCurIndex > mSources.size()){
-
+        if (mCurIndex >= mSources.size()){
+            updateVisibility(1);
+            mImageView.setImageResource(R.drawable.loading);
             return;
+        }else{
+
         }
         MediaSrc source = mSources.get(mCurIndex);
         switch (source.getTypeID()) {
             case 1:
                 // image
+                mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 mImageView.setImageURI(Uri.parse(source.getUrlLocal()));
                 new Handler().postDelayed(new Runnable() {
                     @Override
