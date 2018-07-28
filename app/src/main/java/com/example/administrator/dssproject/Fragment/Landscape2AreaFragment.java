@@ -14,9 +14,9 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.administrator.dssproject.DataBase.MediaSrc;
-import com.example.administrator.dssproject.DataBase.Playlist;
 import com.example.administrator.dssproject.DataBase.PlaylistItem;
 import com.example.administrator.dssproject.DataBase.ScenarioItem;
+import com.example.administrator.dssproject.DataBase.Schedule;
 import com.example.administrator.dssproject.MainActivity;
 import com.example.administrator.dssproject.R;
 import com.example.administrator.dssproject.Utils.ImageVideoView;
@@ -29,7 +29,7 @@ import static com.example.administrator.dssproject.Time.ScheduleQueue.ARG_SCHEDU
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Landscape2SideFragment extends Fragment {
+public class Landscape2AreaFragment extends Fragment {
 
 
     private int mScheduleId;
@@ -37,14 +37,17 @@ public class Landscape2SideFragment extends Fragment {
     private List<MediaSrc> mVideoPaths19 = new ArrayList<>();
     private List<MediaSrc> mVideoPaths20 = new ArrayList<>();
 
+    private List<PlaylistItem> mPlaylistItemList19 = new ArrayList<>();
+    private List<PlaylistItem> mPlaylistItemList20 = new ArrayList<>();
+
 
     ImageVideoView video1;
     ImageVideoView video2;
 
-    public static Landscape2SideFragment newInstance(int scheduleId) {
+    public static Landscape2AreaFragment newInstance(int scheduleId) {
         Bundle args = new Bundle();
         args.putInt(ARG_SCHEDULE_ID, scheduleId);
-        Landscape2SideFragment fragment = new Landscape2SideFragment();
+        Landscape2AreaFragment fragment = new Landscape2AreaFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,63 +67,63 @@ public class Landscape2SideFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_landscape2_side, container, false);
+        View view = inflater.inflate(R.layout.fragment_landscape2_area, container, false);
         video1 = view.findViewById(R.id.areaView1);
         video2 = view.findViewById(R.id.areaView2);
+
+        Schedule schedule = MainActivity.myAppDatabase.scheduleDAO().getASchedule(mScheduleId);
 
         List<ScenarioItem> scenarioItemList19 = new ArrayList<ScenarioItem>();
         List<ScenarioItem> scenarioItemList20 = new ArrayList<ScenarioItem>();
 
-        List<Playlist> playlistListOf19 = new ArrayList<Playlist>();
-        List<Playlist> playlistListOf20 = new ArrayList<Playlist>();
+        /*List<Playlist> playlistListOf19 = new ArrayList<Playlist>();
+        List<Playlist> playlistListOf20 = new ArrayList<Playlist>();*/
+
+        List<Integer> playlistListOf19 = new ArrayList<>();
+        List<Integer> playlistListOf20 = new ArrayList<>();
 
         List<PlaylistItem> playlistItemList19 = new ArrayList<PlaylistItem>();
         List<PlaylistItem> playlistItemList20 = new ArrayList<PlaylistItem>();
 
         List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScehduleId(mScheduleId);
-        for(int i = 0; i < scenarioItemList.size(); i++){
-            if(scenarioItemList.get(i).getAreaId() == 19){
+        for (int i = 0; i < scenarioItemList.size(); i++) {
+            if (scenarioItemList.get(i).getAreaId() == 19) {
                 scenarioItemList19 = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemListByAreaId(19);
 
-            }else if(scenarioItemList.get(i).getAreaId() == 20){
+            } else if (scenarioItemList.get(i).getAreaId() == 20) {
                 scenarioItemList20 = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemListByAreaId(20);
-
-
             }
+        }
+        for (int i = 0; i < scenarioItemList19.size(); i++) {
+            playlistListOf19.add(scenarioItemList19.get(i).getPlaylistId());
+        }
+        for (int i = 0; i < scenarioItemList20.size(); i++) {
+//            playlistListOf20 = MainActivity.myAppDatabase.playlistDAO().getPlaylistListByScenarioItem(scenarioItemList20.get(i).getScenarioId());
+            playlistListOf20.add(scenarioItemList20.get(i).getPlaylistId());
 
         }
-        for(int i = 0; i < scenarioItemList19.size(); i++){
-            playlistListOf19 = MainActivity.myAppDatabase.playlistDAO().getPlaylistListByPlaylistId(scenarioItemList19.get(i).getPlaylistId());
-
-        }
-        for(int i = 0; i < scenarioItemList20.size(); i++){
-            playlistListOf20 = MainActivity.myAppDatabase.playlistDAO().getPlaylistListByPlaylistId(scenarioItemList20.get(i).getPlaylistId());
-
-        }
-
-        for (int i = 0; i < playlistListOf19.size(); i++){
-            playlistItemList19 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf19.get(i).getPlaylistId());
-            for(int j = 0; j < playlistItemList19.size(); j++){
+        for (int i = 0; i < playlistListOf19.size(); i++) {
+            playlistItemList19 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf19.get(i));
+            for (int j = 0; j < playlistItemList19.size(); j++) {
+                mPlaylistItemList19.add(playlistItemList19.get(j));
                 MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrcByPlaylistItemId(playlistItemList19.get(j).getPlaylistItemId());
                 mVideoPaths19.add(mediaSrc);
             }
         }
-
-        for (int i = 0; i < playlistListOf20.size(); i++){
-            playlistItemList20 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf20.get(i).getPlaylistId());
-            for(int j = 0; j < playlistItemList20.size(); j++){
+        for (int i = 0; i < playlistListOf20.size(); i++) {
+            playlistItemList20 = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItemByPlaylistId(playlistListOf20.get(i));
+            for (int j = 0; j < playlistItemList20.size(); j++) {
+                mPlaylistItemList20.add(playlistItemList20.get(j));
                 MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrcByPlaylistItemId(playlistItemList20.get(j).getPlaylistItemId());
                 mVideoPaths20.add(mediaSrc);
             }
         }
-
-        video1.setMediaSources(playlistItemList19, mVideoPaths19);
-        video2.setMediaSources(playlistItemList20, mVideoPaths20);
+        int timesToPlay = schedule.getTimesToPlay();
+        video1.setMediaSources(mPlaylistItemList19, mVideoPaths19, timesToPlay);
+        video2.setMediaSources(mPlaylistItemList20, mVideoPaths20, timesToPlay);
 
         return view;
     }
-
-
 
 
     private class OnVideoCompletionListener implements MediaPlayer.OnCompletionListener {

@@ -44,7 +44,7 @@ public class Supporter {
 
             if (new CheckForSDCard().isExternalStorageWritable()) {
                 apkStorage = new File(
-                        context.getExternalFilesDir(null) + "/"
+                        Environment.getExternalStorageDirectory() + "/"
                                 + Supporter.downloadDirectory);
 
             } else
@@ -57,7 +57,9 @@ public class Supporter {
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             downloadFileName = downloadFileName + " " + timestamp;
-            downloadFileName = downloadFileName.replace(" ","_").trim();
+            downloadFileName = downloadFileName.replace(" ","").trim();
+            downloadFileName = downloadFileName.replace(":","").trim();
+            downloadFileName = downloadFileName.replace("-","").trim();
 
             outputFile = new File(apkStorage, downloadFileName + downloadTailFileName);//Create Output file in Main File
 
@@ -89,9 +91,9 @@ public class Supporter {
             outputFile = null;
             Log.e(TAG, "Download Error Exception " + e.getMessage());
         }
-//        newUrl = pathname + "/" + downloadFileName + downloadTailFileName;
-
-        return outputFile.getAbsolutePath();
+        newUrl = pathname + "/" + downloadFileName + downloadTailFileName;
+//        newUrl =  outputFile.getAbsolutePath();
+        return newUrl;
     }
 
 

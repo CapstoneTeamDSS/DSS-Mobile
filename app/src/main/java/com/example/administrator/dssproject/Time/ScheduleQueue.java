@@ -28,7 +28,6 @@ public class ScheduleQueue {
         if(scheduleListOrdered.size() != 0){
             String startTime = scheduleListOrdered.get(0).getStartTime();
             int scheduleId = scheduleListOrdered.get(0).getScheduleId();
-
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             long milliseconds = 0;
             try{
@@ -38,9 +37,6 @@ public class ScheduleQueue {
             }catch (ParseException e){
                 Log.e("Parse Time: ", e.toString());
             }
-        *//*Bundle bundle = new Bundle();
-        bundle.putInt("SCHEDULEID", scheduleId);*//*
-
             Intent intent = new Intent(context, MyBroadcastReceiver.class);
             intent.putExtra(ARG_SCHEDULE_ID, scheduleId);
 
@@ -52,10 +48,9 @@ public class ScheduleQueue {
             Toast.makeText(context, "There are no schedules", Toast.LENGTH_SHORT).show();
         }*/
 
-
         //**************TEST**************//
         Intent intent = new Intent(context, MyBroadcastReceiver.class);
-        intent.putExtra(ARG_SCHEDULE_ID, 32);
+        intent.putExtra(ARG_SCHEDULE_ID, 43);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context.getApplicationContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -64,6 +59,9 @@ public class ScheduleQueue {
 
     }
 
+
+    /*Bundle bundle = new Bundle();
+        bundle.putInt("SCHEDULEID", scheduleId);*/
 
 
     //get ScheduleList have startTime before 5

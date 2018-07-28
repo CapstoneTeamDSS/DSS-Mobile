@@ -167,8 +167,8 @@ public class ConstrainFragment extends Fragment {
 
         //Play AreaId 19
         MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrc(playlistItemList19.get(1).getMediaSrcId());
-        video1.setMediaSources(playlistItemList19, mVideoPaths19);
-        video2.setMediaSources(playlistItemList20, mVideoPaths20);
+        /*video1.setMediaSources(playlistItemList19, mVideoPaths19);
+        video2.setMediaSources(playlistItemList20, mVideoPaths20);*/
 
         /*video3.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-20_13:46:51.825.mp4");
         video3.requestFocus();

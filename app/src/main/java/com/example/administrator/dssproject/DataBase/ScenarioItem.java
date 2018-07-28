@@ -4,10 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-
-import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "scenarioItem",
         indices = {@Index("scenario_id"), @Index("playlist_id")},
@@ -82,7 +79,6 @@ public class ScenarioItem implements Comparable<ScenarioItem>{
     public void setAreaId(int areaId) {
         this.areaId = areaId;
     }
-
 
     @Override
     public int compareTo(@NonNull ScenarioItem scenarioItem) {

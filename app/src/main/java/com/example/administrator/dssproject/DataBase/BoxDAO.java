@@ -17,9 +17,6 @@ public interface BoxDAO {
     @Query("SELECT * FROM box")
     public List<Box> getBox();
 
-    @Query("SELECT box_id FROM box WHERE box_id = ''")
-    public int getBoxId();
-
     @Update
     public void updateBox(Box box);
 

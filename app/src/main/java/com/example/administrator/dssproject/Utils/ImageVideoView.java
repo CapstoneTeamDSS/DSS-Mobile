@@ -25,12 +25,16 @@ public class ImageVideoView extends FrameLayout {
 
     private ImageView mImageView;
     private VideoView mVideoView;
+//    private MediaPlayer mMediaPlayer;
 
     @NonNull
     private List<PlaylistItem> mPlaylistItems;
     @NonNull
     private List<MediaSrc> mSources;
     private int mCurIndex = 0;
+    private int mCurTimes = 0;
+    private int mTimesToPlay = 0;
+    private boolean mFlag = true;
 
     public ImageVideoView(Context context) {
         super(context);
@@ -42,7 +46,7 @@ public class ImageVideoView extends FrameLayout {
         init(attrs, 0);
     }
 
-    public ImageVideoView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ImageVideoView(Context context, @Nullable AttributeSet attrs, int defStyleAttr   ) {
         super(context, attrs, defStyleAttr);
         init(attrs, defStyleAttr);
     }
@@ -56,6 +60,7 @@ public class ImageVideoView extends FrameLayout {
 
         mVideoView = new VideoView(context);
         mVideoView.setLayoutParams(layoutParams);
+
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
@@ -67,21 +72,24 @@ public class ImageVideoView extends FrameLayout {
         addView(mVideoView);
     }
 
-    public void setMediaSources(@NonNull List<PlaylistItem> playlistItems, @NonNull List<MediaSrc> sources) {
+    public void setMediaSources(@NonNull List<PlaylistItem> playlistItems, @NonNull List<MediaSrc> sources, @NonNull int timesToPlay) {
         mPlaylistItems = playlistItems;
         mSources = sources;
+        mTimesToPlay = timesToPlay;
 
         showNextMedia();
 
     }
 
     private void showNextMedia() {
-        if (mCurIndex >= mSources.size()){
-            updateVisibility(1);
-            mImageView.setImageResource(R.drawable.loading);
-            return;
-        }else{
-
+        if (mCurIndex >= mSources.size()) {
+            mCurTimes++;
+            mCurIndex = 0;
+            if(mCurTimes >= mTimesToPlay){
+                updateVisibility(1);
+                mImageView.setImageResource(R.drawable.loading);
+                return;
+            }
         }
         MediaSrc source = mSources.get(mCurIndex);
         switch (source.getTypeID()) {
@@ -108,6 +116,7 @@ public class ImageVideoView extends FrameLayout {
         updateVisibility(source.getTypeID());
         mCurIndex++;
     }
+
 
     private void updateVisibility(int mediaType) {
         mImageView.setVisibility(mediaType == 1 ? VISIBLE : INVISIBLE);

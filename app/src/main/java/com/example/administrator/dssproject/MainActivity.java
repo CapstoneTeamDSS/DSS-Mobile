@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -27,10 +26,9 @@ import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
 import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
-import com.example.administrator.dssproject.Fragment.BoxFragment;
-import com.example.administrator.dssproject.Fragment.ConstrainFragment;
-import com.example.administrator.dssproject.Fragment.Landscape2SideFragment;
+import com.example.administrator.dssproject.Fragment.Landscape2AreaFragment;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -61,19 +59,24 @@ public class MainActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-
         shouldAskPermissionWrite();
-
-        int boxId = 14;
+//        scheduleApiCalls();
+//        int boxId = 14;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ApiData.getDataFromAPI(MainActivity.this,14);
-            }
-        }, 10000);
-//        ApiData.getDataFromAPI(MainActivity.this,14);
+                List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
+                if (boxes.size() == 0) {
+                    Intent intent = new Intent(MainActivity.this, BoxActivity.class);
+                    startActivity(intent);
+                } else {
+                    boxes = MainActivity.myAppDatabase.boxDAO().getBox();
+                    int boxId = boxes.get(0).getBoxId();
+                    ApiData.getDataFromAPI(MainActivity.this, boxId);
+                }
 
-//        ApiData.getDataFromAPI(this,14);
+            }
+        }, 5000);
 
 //        ApiData.getDataFromAPI(this, boxId);
 
@@ -84,11 +87,6 @@ public class MainActivity extends AppCompatActivity {
                 ApiData.getDataFromAPI(this, boxId);
             }
         }, 1800000);*/
-        /*videoView = findViewById(R.id.videoView);
-
-        Uri uri = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.afaf1);
-        videoView.setVideoURI(uri);
-        videoView.start();*/
 
 //        videoView.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-21_16:01:28.1.mp4");
 //        videoView.requestFocus();
@@ -99,15 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
-        /*List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
-        if (boxes.size() == 0) {
-            findViewById(R.id.iv_placeholder).setVisibility(View.GONE);
-            MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new BoxFragment()).
-                    addToBackStack(null).commitAllowingStateLoss();
-        } else {
-
-        }*/
-
 
 
     }
@@ -127,6 +116,21 @@ public class MainActivity extends AppCompatActivity {
     //**************************************************************//
     //**********************************************Supporter****************************//
 
+    private void checkAndRequestPermissions() {
+        String[] permissions = new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+        };
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(permission);
+            }
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+        }
+    }
 
     private void scheduleApiCalls() {
         Handler handler = new Handler();
@@ -134,10 +138,11 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    MainActivity.myAppDatabase.boxDAO().getBoxId();
+                    List<Box> boxList = MainActivity.myAppDatabase.boxDAO().getBox();
+                    int boxId = boxList.get(0).boxId;
                     ApiData.getDataFromAPI(MainActivity.this, boxId);
                 }
-            }, TimeUnit.MINUTES.toMillis(30));
+            },TimeUnit.MINUTES.toMillis(30));
         }
         scheduleApiCalls();
     }
@@ -146,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment;
         switch (layoutId) {
             case 10:
-                fragment = Landscape2SideFragment.newInstance(scheduleId);
+                fragment = Landscape2AreaFragment.newInstance(scheduleId);
                 break;
             case 1:
 
