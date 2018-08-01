@@ -32,9 +32,8 @@ public interface ScenarioItemDAO {
 
     @Query("SELECT * FROM scenarioItem" +
             " WHERE scenario_id IN (SELECT scenario_id FROM scenario" +
-            " WHERE scenario_id IN (SELECT scenario_id FROM schedule" +
-            " WHERE schedule_id = :id))")
-    public List<ScenarioItem> getScenarioItemLIistByScehduleId(int id);
+            " WHERE scenario_id = :id)")
+    public List<ScenarioItem> getScenarioItemLIistByScenarioId(int id);
 
     @Query("SELECT * FROM scenarioItem WHERE area_id = :id ORDER BY scenario_display_order ASC")
     public List<ScenarioItem> getScenarioItemListByAreaId(int id);
