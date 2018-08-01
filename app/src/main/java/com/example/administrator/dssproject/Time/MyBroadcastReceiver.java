@@ -3,28 +3,26 @@ package com.example.administrator.dssproject.Time;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
 
-import com.example.administrator.dssproject.DataBase.Schedule;
+import com.example.administrator.dssproject.DataBase.Scenario;
 import com.example.administrator.dssproject.MainActivity;
-import com.example.administrator.dssproject.R;
 
 public class MyBroadcastReceiver extends BroadcastReceiver {
-    private static final int INVALID_SCHEDULE_ID = -1;
+    private static final int INVALID_SCENARIO_ID = -1;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int scheduleId = intent.getIntExtra(ScheduleQueue.ARG_SCHEDULE_ID, INVALID_SCHEDULE_ID);
-        if (scheduleId == INVALID_SCHEDULE_ID) {
+        int scenarioId = intent.getIntExtra(ScheduleQueue.ARG_SCENARIO_ID, INVALID_SCENARIO_ID);
+        if (scenarioId == INVALID_SCENARIO_ID) {
             return;
         }
 
         Intent updateUiIntent = new Intent(MainActivity.ALARM_INTENT_FILTER_ACTION);
         context.sendBroadcast(updateUiIntent);
 
-        Schedule schedule = MainActivity.myAppDatabase.scheduleDAO().getASchedule(scheduleId);
-        int layoutId = schedule.getLayoutId();
-        MainActivity.getLayout(layoutId, scheduleId);
+        Scenario scenario = MainActivity.myAppDatabase.scenarioDAO().getAScenario(scenarioId);
+        int layoutId = scenario.getLayoutId();
+        MainActivity.getLayout(layoutId, scenarioId);
 
 //        Log.e("LayoutId: ", layoutID);
 //        Toast.makeText(context, "Alarm....", Toast.LENGTH_LONG).show();

@@ -11,8 +11,18 @@ public class Scenario {
     @ColumnInfo(name = "scenario_id")
     private int scenarioId;
 
-    public Scenario(int scenarioId) {
+    @ColumnInfo(name = "scenario_title")
+    private String title;
+
+    @ColumnInfo(name = "scenario_layout_id")
+    private int layoutId;
+
+
+    public Scenario(int scenarioId, String title, int layoutId) {
         this.scenarioId = scenarioId;
+        this.title = title;
+        this.layoutId = layoutId;
+
     }
 
     public int getScenarioId() {
@@ -22,4 +32,22 @@ public class Scenario {
     public void setScenarioId(int scenarioId) {
         this.scenarioId = scenarioId;
     }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getLayoutId() {
+        return layoutId;
+    }
+
+    public void setLayoutId(int layoutId) {
+        this.layoutId = layoutId;
+    }
+
 }

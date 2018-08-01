@@ -40,9 +40,8 @@ public interface MediaSrcDAO {
             " WHERE playlist_id IN (SELECT playlist_id FROM playlist " +
             " WHERE playlist_id IN (SELECT playlist_id FROM scenarioItem " +
             " WHERE scenario_id IN (SELECT scenario_id FROM scenario" +
-            " WHERE scenario_id IN (SELECT scenario_id FROM schedule " +
-            " WHERE schedule_id = :id)))))")
-    public List<MediaSrc> getMediaByScheduleId(int id);
+            " WHERE scenario_id = :id))))")
+    public List<MediaSrc> getMediaByScenarioId(int id);
 
 
     @Query("SELECT * FROM mediaSrc " +

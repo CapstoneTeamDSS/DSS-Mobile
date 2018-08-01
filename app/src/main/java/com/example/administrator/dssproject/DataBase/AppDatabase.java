@@ -10,7 +10,6 @@ import android.arch.persistence.room.RoomDatabase;
         PlaylistItem.class,
         Scenario.class,
         ScenarioItem.class,
-        Schedule.class,
         Box.class
         }, version = 1,exportSchema  = false)
 public abstract class AppDatabase extends RoomDatabase{
@@ -18,7 +17,6 @@ public abstract class AppDatabase extends RoomDatabase{
     public abstract PlaylistItemDAO playlistItemDAO();
     public abstract PlaylistDAO playlistDAO();
     public abstract ScenarioItemDAO scenarioItemDAO();
-    public abstract ScheduleDAO scheduleDAO();
     public abstract ScenarioDAO scenarioDAO();
     public abstract BoxDAO boxDAO();
 

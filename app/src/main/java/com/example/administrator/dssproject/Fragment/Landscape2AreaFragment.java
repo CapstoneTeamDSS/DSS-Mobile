@@ -15,8 +15,8 @@ import android.widget.VideoView;
 
 import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.DataBase.PlaylistItem;
+import com.example.administrator.dssproject.DataBase.Scenario;
 import com.example.administrator.dssproject.DataBase.ScenarioItem;
-import com.example.administrator.dssproject.DataBase.Schedule;
 import com.example.administrator.dssproject.MainActivity;
 import com.example.administrator.dssproject.R;
 import com.example.administrator.dssproject.Utils.ImageVideoView;
@@ -24,7 +24,7 @@ import com.example.administrator.dssproject.Utils.ImageVideoView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.administrator.dssproject.Time.ScheduleQueue.ARG_SCHEDULE_ID;
+import static com.example.administrator.dssproject.Time.ScheduleQueue.ARG_SCENARIO_ID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,7 +32,7 @@ import static com.example.administrator.dssproject.Time.ScheduleQueue.ARG_SCHEDU
 public class Landscape2AreaFragment extends Fragment {
 
 
-    private int mScheduleId;
+    private int mScenarioId;
     @NonNull
     private List<MediaSrc> mVideoPaths19 = new ArrayList<>();
     private List<MediaSrc> mVideoPaths20 = new ArrayList<>();
@@ -44,9 +44,9 @@ public class Landscape2AreaFragment extends Fragment {
     ImageVideoView video1;
     ImageVideoView video2;
 
-    public static Landscape2AreaFragment newInstance(int scheduleId) {
+    public static Landscape2AreaFragment newInstance(int scenarioId) {
         Bundle args = new Bundle();
-        args.putInt(ARG_SCHEDULE_ID, scheduleId);
+        args.putInt(ARG_SCENARIO_ID, scenarioId);
         Landscape2AreaFragment fragment = new Landscape2AreaFragment();
         fragment.setArguments(args);
         return fragment;
@@ -58,7 +58,7 @@ public class Landscape2AreaFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            mScheduleId = args.getInt(ARG_SCHEDULE_ID);
+            mScenarioId = args.getInt(ARG_SCENARIO_ID);
         }
     }
 
@@ -71,7 +71,7 @@ public class Landscape2AreaFragment extends Fragment {
         video1 = view.findViewById(R.id.areaView1);
         video2 = view.findViewById(R.id.areaView2);
 
-        Schedule schedule = MainActivity.myAppDatabase.scheduleDAO().getASchedule(mScheduleId);
+        Scenario scenario = MainActivity.myAppDatabase.scenarioDAO().getAScenario(mScenarioId);
 
         List<ScenarioItem> scenarioItemList19 = new ArrayList<ScenarioItem>();
         List<ScenarioItem> scenarioItemList20 = new ArrayList<ScenarioItem>();
@@ -85,7 +85,7 @@ public class Landscape2AreaFragment extends Fragment {
         List<PlaylistItem> playlistItemList19 = new ArrayList<PlaylistItem>();
         List<PlaylistItem> playlistItemList20 = new ArrayList<PlaylistItem>();
 
-        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScehduleId(mScheduleId);
+        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScenarioId(mScenarioId);
         for (int i = 0; i < scenarioItemList.size(); i++) {
             if (scenarioItemList.get(i).getAreaId() == 19) {
                 scenarioItemList19 = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemListByAreaId(19);
@@ -118,9 +118,9 @@ public class Landscape2AreaFragment extends Fragment {
                 mVideoPaths20.add(mediaSrc);
             }
         }
-        int timesToPlay = schedule.getTimesToPlay();
-        video1.setMediaSources(mPlaylistItemList19, mVideoPaths19, timesToPlay);
-        video2.setMediaSources(mPlaylistItemList20, mVideoPaths20, timesToPlay);
+
+        video1.setMediaSources(mPlaylistItemList19, mVideoPaths19);
+        video2.setMediaSources(mPlaylistItemList20, mVideoPaths20);
 
         return view;
     }

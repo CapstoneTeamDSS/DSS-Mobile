@@ -3,19 +3,16 @@ package com.example.administrator.dssproject.API;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.administrator.dssproject.DataBase.AppDatabase;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.DataBase.Playlist;
 import com.example.administrator.dssproject.DataBase.PlaylistItem;
 import com.example.administrator.dssproject.DataBase.Scenario;
 import com.example.administrator.dssproject.DataBase.ScenarioItem;
-import com.example.administrator.dssproject.DataBase.Schedule;
 import com.example.administrator.dssproject.MainActivity;
 import com.example.administrator.dssproject.Model.PlaylistItemDTO;
+import com.example.administrator.dssproject.Model.ScenarioDTO;
 import com.example.administrator.dssproject.Model.ScenarioItemDTO;
-import com.example.administrator.dssproject.Model.ScheduleDTO;
 import com.example.administrator.dssproject.SDCard.DownloadTask;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -36,23 +33,18 @@ public class ApiData {
                 .build();
         Api api = retrofit.create(Api.class);
         Log.e(TAG, api.toString());
-        List<Schedule> schedules;
-        Call<List<ScheduleDTO>> call = api.getScheduleByBoxId(boxId);
-        call.enqueue(new Callback<List<ScheduleDTO>>() {
+
+        Call<ScenarioDTO> call = api.getScenarioByBoxId(boxId);
+        call.enqueue(new Callback<ScenarioDTO>() {
             @Override
-            public void onResponse(Call<List<ScheduleDTO>> call, Response<List<ScheduleDTO>> response) {
-                List<ScheduleDTO> scheduleListAPI = response.body();
-              for (int i = 0; i < scheduleListAPI.size(); i++) {
-                    ScheduleDTO scheduleDTO = scheduleListAPI.get(i);
-                    int scheduleId = scheduleDTO.getScheduleId();
-                    int scenarioId = scheduleDTO.getScenarioId();
-                    int layoutId = scheduleDTO.getLayoutId();
-                    String title = scheduleDTO.getTitle();
-                    String startTime = scheduleDTO.getStartTime();
-                    String endTime = scheduleDTO.getEndTime();
-                    int timesToPlay = scheduleDTO.getTimesToPlay();
+            public void onResponse(Call<ScenarioDTO> call, Response<ScenarioDTO> response) {
+                ScenarioDTO scenarioAPI = response.body();
+                ScenarioDTO scenarioDTO = scenarioAPI;
+                    int scenarioId = scenarioDTO.getScenarioId();
+                    int layoutId = scenarioDTO.getLayoutId();
+                    String title = scenarioDTO.getTitle();
                   //Insert Scenario to sqlite
-                  Scenario scenario = new Scenario(scenarioId);
+                  Scenario scenario = new Scenario(scenarioId, title, layoutId);
                   try{
                       boolean checkScenarioId = checkDuplicateScenario(scenarioId);
                       if(!checkScenarioId){
@@ -63,22 +55,8 @@ public class ApiData {
                   }catch (Exception e){
                       Log.e(TAG, e.toString());
                   }
-
-                  //Insert Schedule to sqlite
-                  Schedule schedule = new Schedule(scheduleId, scenarioId, title, layoutId, startTime, endTime,timesToPlay);
-                  try{
-                      boolean checkScheduleId = checkDuplicateSchedule(scheduleId);
-                      if (!checkScheduleId){
-                          MainActivity.myAppDatabase.scheduleDAO().addSchedule(schedule);
-                      }else{
-                          MainActivity.myAppDatabase.scheduleDAO().updateSchedule(schedule);
-                      }
-                  }catch (Exception e){
-                      Log.e(TAG, e.toString());
-                  }
-
-                    for (int j = 0; j < scheduleListAPI.get(i).getScenarioItems().size(); j++){
-                        ScenarioItemDTO scenarioItemDTO = scheduleListAPI.get(i).getScenarioItems().get(j);
+                    for (int j = 0; j < scenarioAPI.getScenarioItems().size(); j++){
+                        ScenarioItemDTO scenarioItemDTO = scenarioAPI.getScenarioItems().get(j);
 
                         //Insert Playlist to sqlite
                         int playlistId = scenarioItemDTO.getPlaylistId();
@@ -93,7 +71,6 @@ public class ApiData {
                         }catch (Exception e){
                             Log.e(TAG, e.toString());
                         }
-
                         //Insert ScenarioItem to sqlite
                         int scenarioIdScen = scenarioItemDTO.getScenarioId();
                         int playlistIdScen = scenarioItemDTO.getPlaylistId();
@@ -112,8 +89,8 @@ public class ApiData {
 //                            Log.e(TAG, e.toString());
                         }
 
-                        for (int k = 0; k < scheduleListAPI.get(i).getScenarioItems().get(j).getPlaylistItems().size(); k++){
-                            PlaylistItemDTO playlistItemDTO = scheduleListAPI.get(i).getScenarioItems().get(j).getPlaylistItems().get(k);
+                        for (int k = 0; k < scenarioAPI.getScenarioItems().get(j).getPlaylistItems().size(); k++){
+                            PlaylistItemDTO playlistItemDTO = scenarioAPI.getScenarioItems().get(j).getPlaylistItems().get(k);
 
                             //Insert MediaSrc in sqlite
                             int mediaSrcId = playlistItemDTO.getMediaSrcId();
@@ -166,43 +143,26 @@ public class ApiData {
 //                            MainActivity.myAppDatabase.playlistDAO().deleteAll();
 //                            MainActivity.myAppDatabase.scheduleDAO().deleteAll();
 
-//                            MainActivity.myAppDatabase.scenarioItemDAO().addScenarioItem(scenarioItem);
-//                            MainActivity.myAppDatabase.mediaSrcDAO().addMediaSrc(mediaSrc);
-//                            MainActivity.myAppDatabase.playlistDAO().addPlaylist(playlist);
-//                            MainActivity.myAppDatabase.scheduleDAO().addSchedule(schedule);
-//                            MainActivity.myAppDatabase.playlistItemDAO().addPlaylistItem(playlistItem);
-
-
                         }
                     }
+                    Scenario scenarioView = MainActivity.myAppDatabase.scenarioDAO().getAScenario(80);
+                    List<ScenarioItem> scenarioList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItems();
+                    List<Playlist> playlistList = MainActivity.myAppDatabase.playlistDAO().getPlaylists();
+                    List<PlaylistItem> playlistItemList = MainActivity.myAppDatabase.playlistItemDAO().getPlaylistItems();
+                    List<MediaSrc> mediaSrcList = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
-                }
+
                 try {
                     new DownloadTask(context).execute();
                 }catch (Exception e){
                     Log.e(TAG, e.toString());
                 }
-
-//
             }
-
             @Override
-            public void onFailure(Call<List<ScheduleDTO>> call, Throwable t) {
-//                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<ScenarioDTO> call, Throwable t) {
                 Log.e(TAG, "" + call);
             }
         });
-    }
-
-    public static boolean checkDuplicateSchedule(int id){
-        boolean check = false;
-        List<Schedule> scheduleList = MainActivity.myAppDatabase.scheduleDAO().getSchedules();
-        for (int m = 0; m < scheduleList.size(); m++){
-            if(id == scheduleList.get(m).getScheduleId()){
-                check = true;
-            }
-        }
-        return check;
     }
 
     public static boolean checkDuplicateScenarioItem(int scenarioId, int playlistId, int areaId){

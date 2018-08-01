@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -27,6 +28,7 @@ import com.example.administrator.dssproject.DataBase.AppDatabase;
 import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.Fragment.Landscape2AreaFragment;
+import com.example.administrator.dssproject.Fragment.Landscape4AreaFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,9 +44,6 @@ public class MainActivity extends AppCompatActivity {
     public static FragmentManager fragmentManager;
     public static AppDatabase myAppDatabase;
     private static int boxId;
-    Calendar calendar;
-    VideoView videoView;
-    ImageView imageView;
 
     private final BroadcastReceiver mAlarmReceiver = new BroadcastReceiver() {
         @Override
@@ -60,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         shouldAskPermissionWrite();
-//        scheduleApiCalls();
-//        int boxId = 14;
+
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -74,23 +73,9 @@ public class MainActivity extends AppCompatActivity {
                     int boxId = boxes.get(0).getBoxId();
                     ApiData.getDataFromAPI(MainActivity.this, boxId);
                 }
-
             }
         }, 5000);
 
-//        ApiData.getDataFromAPI(this, boxId);
-
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MainActivity.myAppDatabase.boxDAO().getABox();
-                ApiData.getDataFromAPI(this, boxId);
-            }
-        }, 1800000);*/
-
-//        videoView.setVideoPath("/storage/emulated/0/DSSDownloadData/Playing_Cat_2018-07-21_16:01:28.1.mp4");
-//        videoView.requestFocus();
-//        videoView.start();
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         fragmentManager = getSupportFragmentManager();
         myAppDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "dssdb")
@@ -147,16 +132,15 @@ public class MainActivity extends AppCompatActivity {
         scheduleApiCalls();
     }
 
-    public static void getLayout(int layoutId, int scheduleId) {
+    public static void getLayout(int layoutId, int scenarioId) {
         Fragment fragment;
         switch (layoutId) {
             case 10:
-                fragment = Landscape2AreaFragment.newInstance(scheduleId);
+                fragment = Landscape2AreaFragment.newInstance(scenarioId);
                 break;
-            case 1:
-
-                /*fragment = Landscape16x9Fragment.newInstance(scheduleId);
-                break;*/
+            case 29:
+                fragment = Landscape4AreaFragment.newInstance(scenarioId);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown layout ID");
         }

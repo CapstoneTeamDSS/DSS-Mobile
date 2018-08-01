@@ -72,11 +72,9 @@ public class ImageVideoView extends FrameLayout {
         addView(mVideoView);
     }
 
-    public void setMediaSources(@NonNull List<PlaylistItem> playlistItems, @NonNull List<MediaSrc> sources, @NonNull int timesToPlay) {
+    public void setMediaSources(@NonNull List<PlaylistItem> playlistItems, @NonNull List<MediaSrc> sources) {
         mPlaylistItems = playlistItems;
         mSources = sources;
-        mTimesToPlay = timesToPlay;
-
         showNextMedia();
 
     }

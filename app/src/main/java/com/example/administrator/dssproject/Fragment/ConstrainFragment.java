@@ -3,12 +3,10 @@ package com.example.administrator.dssproject.Fragment;
 
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,17 +17,14 @@ import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.DataBase.Playlist;
 import com.example.administrator.dssproject.DataBase.PlaylistItem;
 import com.example.administrator.dssproject.DataBase.ScenarioItem;
-import com.example.administrator.dssproject.DataBase.Schedule;
 import com.example.administrator.dssproject.MainActivity;
 import com.example.administrator.dssproject.R;
-import com.example.administrator.dssproject.Time.ScheduleQueue;
 import com.example.administrator.dssproject.Utils.ImageVideoView;
-import com.example.administrator.dssproject.Utils.Supporter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.administrator.dssproject.Time.ScheduleQueue.ARG_SCHEDULE_ID;
+import static com.example.administrator.dssproject.Time.ScheduleQueue.ARG_SCENARIO_ID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +45,7 @@ public class ConstrainFragment extends Fragment {
     public static ConstrainFragment newInstance(int scheduleId) {
 
         Bundle args = new Bundle();
-        args.putInt(ARG_SCHEDULE_ID, scheduleId);
+        args.putInt(ARG_SCENARIO_ID, scheduleId);
         ConstrainFragment fragment = new ConstrainFragment();
         fragment.setArguments(args);
         return fragment;
@@ -62,7 +57,7 @@ public class ConstrainFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            mScheduleId = args.getInt(ARG_SCHEDULE_ID);
+            mScheduleId = args.getInt(ARG_SCENARIO_ID);
         }
     }
 
@@ -103,7 +98,7 @@ public class ConstrainFragment extends Fragment {
         List<PlaylistItem> playlistItemList19 = new ArrayList<PlaylistItem>();
         List<PlaylistItem> playlistItemList20 = new ArrayList<PlaylistItem>();
 
-        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScehduleId(mScheduleId);
+        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScenarioId(mScheduleId);
         for(int i = 0; i < scenarioItemList.size(); i++){
             if(scenarioItemList.get(i).getAreaId() == 19){
                 scenarioItemList19 = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemListByAreaId(19);
