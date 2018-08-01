@@ -35,6 +35,5 @@ public interface PlaylistItemDAO {
             " WHERE playlist_id = :id)" +
             " ORDER BY playlistItem_displayOrder ASC")
     public List<PlaylistItem> getPlaylistItemByPlaylistId(int id);
-
-
+    
 }

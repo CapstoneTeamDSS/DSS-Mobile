@@ -27,6 +27,7 @@ import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
 import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
+import com.example.administrator.dssproject.Fragment.ControlFragment;
 import com.example.administrator.dssproject.Fragment.Landscape2AreaFragment;
 import com.example.administrator.dssproject.Fragment.Landscape4AreaFragment;
 
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         shouldAskPermissionWrite();
-
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -133,18 +133,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void getLayout(int layoutId, int scenarioId) {
-        Fragment fragment;
-        switch (layoutId) {
-            case 10:
-                fragment = Landscape2AreaFragment.newInstance(scenarioId);
-                break;
-            case 29:
-                fragment = Landscape4AreaFragment.newInstance(scenarioId);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown layout ID");
-        }
-
+        Fragment fragment = ControlFragment.newInstance(scenarioId, layoutId);
+//        switch (layoutId) {
+//            case 10:
+//                fragment = Landscape2AreaFragment.newInstance(scenarioId);
+//                break;
+//            case 29:
+//                fragment = Landscape4AreaFragment.newInstance(scenarioId);
+//                break;
+//            default:
+//                throw new IllegalArgumentException("Unknown layout ID");
+//        }
+//
         MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
                 .addToBackStack(null).commitAllowingStateLoss();
     }
