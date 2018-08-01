@@ -25,6 +25,7 @@ public class Supporter {
     public static final String downloadDirectory = "DSSDownloadData";
 //    public static final String downloadVideo = "http://androhub.com/demo/demo.mp4";
 
+
     public static String savingDataToSDCard(Context context, File outputFile, File apkStorage, String downloadUrl, String downloadFileName, String downloadTailFileName ){
         String newUrl = "";
         String pathname = Environment.getExternalStorageDirectory() + "/"
@@ -41,7 +42,7 @@ public class Supporter {
 
             }
 
-            if (new CheckForSDCard().isSDCardPresent()) {
+            if (new CheckForSDCard().isExternalStorageWritable()) {
                 apkStorage = new File(
                         Environment.getExternalStorageDirectory() + "/"
                                 + Supporter.downloadDirectory);
@@ -56,7 +57,9 @@ public class Supporter {
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             downloadFileName = downloadFileName + " " + timestamp;
-            downloadFileName = downloadFileName.replace(" ","_").trim();
+            downloadFileName = downloadFileName.replace(" ","").trim();
+            downloadFileName = downloadFileName.replace(":","").trim();
+            downloadFileName = downloadFileName.replace("-","").trim();
 
             outputFile = new File(apkStorage, downloadFileName + downloadTailFileName);//Create Output file in Main File
 
@@ -89,7 +92,7 @@ public class Supporter {
             Log.e(TAG, "Download Error Exception " + e.getMessage());
         }
         newUrl = pathname + "/" + downloadFileName + downloadTailFileName;
-
+//        newUrl =  outputFile.getAbsolutePath();
         return newUrl;
     }
 

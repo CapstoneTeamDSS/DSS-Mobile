@@ -41,9 +41,9 @@ public class PlaylistItem implements Comparable<PlaylistItem>{
     private int displayOrder;
 
     @ColumnInfo(name = "playlistItem_duration")
-    private String duration;
+    private long duration;
 
-    public PlaylistItem(int playlistItemId, int mediaSrcId, int playlistId, int displayOrder, String duration) {
+    public PlaylistItem(int playlistItemId, int mediaSrcId, int playlistId, int displayOrder, long duration) {
         this.playlistItemId = playlistItemId;
         this.mediaSrcId = mediaSrcId;
         this.playlistId = playlistId;
@@ -83,11 +83,11 @@ public class PlaylistItem implements Comparable<PlaylistItem>{
         this.displayOrder = displayOrder;
     }
 
-    public String getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 

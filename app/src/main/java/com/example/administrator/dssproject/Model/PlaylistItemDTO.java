@@ -14,7 +14,7 @@ public class PlaylistItemDTO {
     public int displayOrder;
 
     @SerializedName("duration")
-    public String duration;
+    public long duration;
 
     @SerializedName("url_media")
     public String urlMedia;
@@ -31,7 +31,7 @@ public class PlaylistItemDTO {
     public PlaylistItemDTO() {
     }
 
-    public PlaylistItemDTO(int playlistItemId, int mediaSrcId, int displayOrder, String duration, String urlMedia, String title, String extensionMedia, int typeId) {
+    public PlaylistItemDTO(int playlistItemId, int mediaSrcId, int displayOrder, long duration, String urlMedia, String title, String extensionMedia, int typeId) {
         this.playlistItemId = playlistItemId;
         this.mediaSrcId = mediaSrcId;
         this.displayOrder = displayOrder;
@@ -66,11 +66,11 @@ public class PlaylistItemDTO {
         this.displayOrder = displayOrder;
     }
 
-    public String getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 

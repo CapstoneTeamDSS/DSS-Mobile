@@ -52,10 +52,10 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrc(downloadQueue.get(i));
         }
 
-        listMedia = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
+//        listMedia = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        ScheduleQueue.startSchedule(context, alarmManager);
+        ScheduleQueue.startScenario(context, alarmManager);
 
 
         return null;
