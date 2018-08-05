@@ -7,49 +7,38 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "scenario",
-        indices = {@Index(value = "scenario_id", unique = true), @Index("layout_id")},
-        primaryKeys = {"scenario_id", "layout_id"},
+@Entity(tableName = "area",
+        indices = {@Index("layout_id")},
+        primaryKeys = {"area_id", "layout_id"},
         foreignKeys = {
                 @ForeignKey(
                         entity = Layout.class,
                         parentColumns = "layout_id",
                         childColumns = "layout_id")
-})
-public class Scenario {
+        })
+public class Area {
 
-    @ColumnInfo(name = "scenario_id")
-    private int scenarioId;
-
-    @ColumnInfo(name = "scenario_title")
-    private String title;
+    @ColumnInfo(name = "area_id")
+    private int areaId;
 
     @ColumnInfo(name = "layout_id")
     private int layoutId;
 
+    @ColumnInfo(name = "visual_type_id")
+    private int visualTypeId;
 
-    public Scenario(int scenarioId, String title, int layoutId) {
-        this.scenarioId = scenarioId;
-        this.title = title;
+    public Area(int areaId, int layoutId, int visualTypeId) {
+        this.areaId = areaId;
         this.layoutId = layoutId;
-
+        this.visualTypeId = visualTypeId;
     }
 
-    public int getScenarioId() {
-        return scenarioId;
+    public int getAreaId() {
+        return areaId;
     }
 
-    public void setScenarioId(int scenarioId) {
-        this.scenarioId = scenarioId;
-    }
-
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    public void setAreaId(int areaId) {
+        this.areaId = areaId;
     }
 
     public int getLayoutId() {
@@ -60,4 +49,11 @@ public class Scenario {
         this.layoutId = layoutId;
     }
 
+    public int getVisualTypeId() {
+        return visualTypeId;
+    }
+
+    public void setVisualTypeId(int visualTypeId) {
+        this.visualTypeId = visualTypeId;
+    }
 }

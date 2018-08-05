@@ -7,17 +7,17 @@ import java.util.List;
 public class ScenarioDTO {
 
     @SerializedName("scenario_id")
-    public int scenarioId;
+    private int scenarioId;
 
     @SerializedName("layout_id")
-    public int layoutId;
+    private int layoutId;
 
     @SerializedName("schedule_title")
-    public String title;
+    private String title;
 
 
     @SerializedName("scenario_items")
-    public List<ScenarioItemDTO> scenarioItems;
+    private List<ScenarioItemDTO> scenarioItems;
 
     public ScenarioDTO() {
     }

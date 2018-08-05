@@ -107,4 +107,33 @@ public class Supporter {
         return playlistItemList;
     }*/
 
+
+    public static String getNameFile(String path){
+        String foo = path;
+        String[] split = foo.split("/");
+        StringBuilder sb = new StringBuilder();
+        /*for (int i = 0; i < split.length; i++) {
+            sb.append(split[split.length - 1]);
+            if (i != split.length - 1) {
+                sb.append(" ");
+            }
+        }*/
+        sb.append(split[split.length - 1]);
+        String joined = sb.toString();
+        return joined;
+    }
+
+    public static String getPathFolder(String path){
+        String foo = path;
+        String[] split = foo.split("/");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < split.length-1; i++) {
+            sb.append(split[i]);
+            if (i != split.length - 1) {
+                sb.append("/");
+            }
+        }
+        String joined = sb.toString();
+        return joined;
+    }
 }

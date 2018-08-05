@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,21 +21,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.VideoView;
 
 import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
 import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.Fragment.ControlFragment;
-import com.example.administrator.dssproject.Fragment.Landscape2AreaFragment;
-import com.example.administrator.dssproject.Fragment.Landscape4AreaFragment;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -71,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     boxes = MainActivity.myAppDatabase.boxDAO().getBox();
                     int boxId = boxes.get(0).getBoxId();
+                    boolean preCall = false;
                     ApiData.getDataFromAPI(MainActivity.this, boxId);
                 }
             }
@@ -82,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
-
-
     }
 
     @Override
@@ -117,34 +114,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void scheduleApiCalls() {
-        Handler handler = new Handler();
-        for (int i = 0; i < 48; i++) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    List<Box> boxList = MainActivity.myAppDatabase.boxDAO().getBox();
-                    int boxId = boxList.get(0).boxId;
-                    ApiData.getDataFromAPI(MainActivity.this, boxId);
-                }
-            },TimeUnit.MINUTES.toMillis(30));
-        }
-        scheduleApiCalls();
-    }
 
-    public static void getLayout(int layoutId, int scenarioId) {
-        Fragment fragment = ControlFragment.newInstance(scenarioId, layoutId);
-//        switch (layoutId) {
-//            case 10:
-//                fragment = Landscape2AreaFragment.newInstance(scenarioId);
-//                break;
-//            case 29:
-//                fragment = Landscape4AreaFragment.newInstance(scenarioId);
-//                break;
-//            default:
-//                throw new IllegalArgumentException("Unknown layout ID");
-//        }
-//
+    public static void getLayout(ControlFragment.ScheduleInfo scheduleInfo) {
+        Fragment fragment = ControlFragment.newInstance(scheduleInfo);
         MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
                 .addToBackStack(null).commitAllowingStateLoss();
     }
@@ -165,30 +137,10 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         100);
             }
-        } else {
-
         }
     }
 
-    public void shouldAskPermissionRead() {
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        100);
-            }
-        } else {
-
-        }
-    }
 
     private boolean isConnectingToInternet() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -200,11 +152,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
     }
 
-    public List<MediaSrc> getAllMediaSrc() {
-        List<MediaSrc> mediaSrcList = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
-        return mediaSrcList;
-    }
 }
 
 //List all Schedule

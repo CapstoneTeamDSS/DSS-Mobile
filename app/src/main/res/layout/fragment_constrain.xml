@@ -28,7 +28,7 @@
             android:padding="2dp"
             app:layout_constraintGuide_percent="0.5" />
 
-        <com.example.administrator.dssproject.Utils.ImageVideoView
+        <com.example.administrator.dssproject.Utils.MediaView
             android:id="@+id/areaView1"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -37,7 +37,7 @@
             app:layout_constraintRight_toLeftOf="@id/gl_vertical"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.example.administrator.dssproject.Utils.ImageVideoView
+        <com.example.administrator.dssproject.Utils.MediaView
             android:id="@+id/areaView2"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -46,7 +46,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.example.administrator.dssproject.Utils.ImageVideoView
+        <com.example.administrator.dssproject.Utils.MediaView
             android:id="@+id/areaView3"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -55,7 +55,7 @@
             app:layout_constraintRight_toLeftOf="@id/gl_vertical"
             app:layout_constraintTop_toBottomOf="@id/gl_horizontal" />
 
-        <com.example.administrator.dssproject.Utils.ImageVideoView
+        <com.example.administrator.dssproject.Utils.MediaView
             android:id="@+id/areaView4"
             android:layout_width="0dp"
             android:layout_height="0dp"

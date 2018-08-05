@@ -13,27 +13,25 @@ public class ScenarioItemDTO {
     private int playlistId;
 
     @SerializedName("display_order_playlist")
-    public int displayOderPlaylist;
+    private int displayOderPlaylist;
 
     @SerializedName("area_id")
-    public int areaId;
+    private int areaId;
+
+    @SerializedName("visual_type_id")
+    private int visualTypeId;
 
     @SerializedName("playlist_items")
-    public List<PlaylistItemDTO> playlistItems;
+    private List<PlaylistItemDTO> playlistItems;
 
-    public ScenarioItemDTO() {
-    }
-
-    public ScenarioItemDTO( int scenarioId, int playlistId, int displayOderPlaylist, int areaId, List<PlaylistItemDTO> playlistItems) {
-
+    public ScenarioItemDTO(int scenarioId, int playlistId, int displayOderPlaylist, int areaId, int visualTypeId, List<PlaylistItemDTO> playlistItems) {
         this.scenarioId = scenarioId;
         this.playlistId = playlistId;
         this.displayOderPlaylist = displayOderPlaylist;
         this.areaId = areaId;
+        this.visualTypeId = visualTypeId;
         this.playlistItems = playlistItems;
     }
-
-
 
     public int getPlaylistId() {
         return playlistId;
@@ -73,5 +71,13 @@ public class ScenarioItemDTO {
 
     public void setScenarioId(int scenarioId) {
         this.scenarioId = scenarioId;
+    }
+
+    public int getVisualTypeId() {
+        return visualTypeId;
+    }
+
+    public void setVisualTypeId(int visualTypeId) {
+        this.visualTypeId = visualTypeId;
     }
 }

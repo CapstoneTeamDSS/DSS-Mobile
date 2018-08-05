@@ -11,8 +11,6 @@ import android.support.annotation.NonNull;
 
 @Entity(tableName = "playlistItem",
         indices = {@Index("playlist_id"), @Index("media_id")},
-//        indices = {@Index(value = {"playlist_id", "media_id"},
-//        unique = true)},
         foreignKeys = {
         @ForeignKey(
                 entity = MediaSrc.class,
