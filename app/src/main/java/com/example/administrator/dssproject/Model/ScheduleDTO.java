@@ -1,111 +1,47 @@
 package com.example.administrator.dssproject.Model;
 
+import com.example.administrator.dssproject.DataBase.Scenario;
 import com.google.gson.annotations.SerializedName;
-
-import java.sql.Time;
-import java.util.List;
 
 public class ScheduleDTO {
 
-    @SerializedName("schedule_id")
-    public int scheduleId;
 
-    @SerializedName("scenario_id")
-    public int scenarioId;
-
-    @SerializedName("layout_id")
-    public int layoutId;
-
-    @SerializedName("schedule_title")
-    public String title;
-
-    @SerializedName("times_to_play")
-    public int timesToPlay;
+    @SerializedName("scenario")
+    private ScenarioDTO scenario;
 
     @SerializedName("start_time")
-    public String startTime;
+    private long startTime;
 
     @SerializedName("end_time")
-    public String endTime;
+    private long endTime;
 
-    @SerializedName("scenario_items")
-    public List<ScenarioItemDTO> scenarioItems;
-
-    public ScheduleDTO() {
-    }
-
-    public ScheduleDTO(int scheduleId, int scenarioId, int layoutId, String title, int timesToPlay, String startTime, String endTime, List<ScenarioItemDTO> scenarioItems) {
-        this.scheduleId = scheduleId;
-        this.scenarioId = scenarioId;
-        this.layoutId = layoutId;
-        this.title = title;
-        this.timesToPlay = timesToPlay;
+    public ScheduleDTO(ScenarioDTO scenario, long startTime, long endTime) {
+        this.scenario = scenario;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.scenarioItems = scenarioItems;
     }
 
-    public int getScheduleId() {
-        return scheduleId;
+    public ScenarioDTO getScenario() {
+        return scenario;
     }
 
-    public void setScheduleId(int scheduleId) {
-        this.scheduleId = scheduleId;
+    public void setScenario(ScenarioDTO scenario) {
+        this.scenario = scenario;
     }
 
-    public int getLayoutId() {
-        return layoutId;
-    }
-
-    public void setLayoutId(int layoutId) {
-        this.layoutId = layoutId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getTimesToPlay() {
-        return timesToPlay;
-    }
-
-    public void setTimesToPlay(int timesToPlay) {
-        this.timesToPlay = timesToPlay;
-    }
-
-    public String getStartTime() {
+    public long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
-    public String getEndTime() {
+    public long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(long endTime) {
         this.endTime = endTime;
-    }
-
-    public List<ScenarioItemDTO> getScenarioItems() {
-        return scenarioItems;
-    }
-
-    public void setScenarioItems(List<ScenarioItemDTO> scenarioItems) {
-        this.scenarioItems = scenarioItems;
-    }
-
-    public int getScenarioId() {
-        return scenarioId;
-    }
-
-    public void setScenarioId(int scenarioId) {
-        this.scenarioId = scenarioId;
     }
 }

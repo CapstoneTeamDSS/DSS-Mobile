@@ -29,4 +29,6 @@ public interface ScenarioDAO {
     @Query("DELETE FROM scenario")
     public void deleteAll();
 
+    @Query("SELECT * FROM scenario WHERE add_time = (SELECT MAX(add_time) FROM scenario)")
+    public Scenario getLastScenario();
 }

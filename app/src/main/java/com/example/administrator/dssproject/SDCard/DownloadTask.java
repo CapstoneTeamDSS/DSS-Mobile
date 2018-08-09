@@ -1,13 +1,12 @@
 package com.example.administrator.dssproject.SDCard;
 
-import android.app.AlarmManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.administrator.dssproject.DataBase.MediaSrc;
+import com.example.administrator.dssproject.Fragment.ControlFragment;
 import com.example.administrator.dssproject.MainActivity;
-import com.example.administrator.dssproject.Time.ScheduleQueue;
 import com.example.administrator.dssproject.Utils.Supporter;
 
 import java.io.File;
@@ -20,9 +19,15 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     private Context context;
     private List<MediaSrc> mediaSrcs;
 
-    public DownloadTask(Context context) {
-        this.context = context;
+    private final int mScenarioId;
+    private final long mStartTime;
+    private final long mEndTime;
 
+    public DownloadTask(Context context, int scenarioId, long startTime, long endTime) {
+        this.context = context;
+        mStartTime = startTime;
+        mEndTime = endTime;
+        mScenarioId = scenarioId;
     }
 
     File apkStorage = null;
@@ -52,10 +57,11 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrc(downloadQueue.get(i));
         }
 
-        listMedia = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
+//        listMedia = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        ScheduleQueue.startSchedule(context, alarmManager);
+
+        int layoutId = MainActivity.myAppDatabase.scenarioDAO().getAScenario(mScenarioId).getLayoutId();
+        MainActivity.getLayout(new ControlFragment.ScheduleInfo(mScenarioId, layoutId, mStartTime, mEndTime));
 
 
         return null;

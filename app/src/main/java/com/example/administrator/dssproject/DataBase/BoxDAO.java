@@ -17,9 +17,6 @@ public interface BoxDAO {
     @Query("SELECT * FROM box")
     public List<Box> getBox();
 
-    @Query("SELECT * FROM box WHERE box_id = :id")
-    public Box getABox(int id);
-
     @Update
     public void updateBox(Box box);
 
