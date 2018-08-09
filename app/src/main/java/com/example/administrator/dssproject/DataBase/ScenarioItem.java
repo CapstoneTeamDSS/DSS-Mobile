@@ -8,21 +8,21 @@ import android.support.annotation.NonNull;
 
 @Entity(tableName = "scenarioItem",
         indices = {@Index("scenario_id"), @Index("playlist_id")},
-        primaryKeys = {"scenario_id", "playlist_id", "area_id"},
+        primaryKeys = {"scenario_id", "playlist_id", "layout_id", "area_id"},
         foreignKeys = {
-        @ForeignKey(
-                entity =  Scenario.class,
-                parentColumns = "scenario_id",
-                childColumns = "scenario_id"
-        ),
-        @ForeignKey(
-                entity = Playlist.class,
-                parentColumns = "playlist_id",
-                childColumns = "playlist_id"
-        )
+                @ForeignKey(
+                        entity = Scenario.class,
+                        parentColumns = "scenario_id",
+                        childColumns = "scenario_id"
+                ),
+                @ForeignKey(
+                        entity = Playlist.class,
+                        parentColumns = "playlist_id",
+                        childColumns = "playlist_id"
+                )
         })
 
-public class ScenarioItem implements Comparable<ScenarioItem>{
+public class ScenarioItem implements Comparable<ScenarioItem> {
 
 //    @PrimaryKey
 //    @ColumnInfo(name = "scenario_item_id")
@@ -37,14 +37,18 @@ public class ScenarioItem implements Comparable<ScenarioItem>{
     @ColumnInfo(name = "scenario_display_order")
     private int displayOrder;
 
+    @ColumnInfo(name = "layout_id")
+    private int layoutId;
+
     @ColumnInfo(name = "area_id")
     private int areaId;
 
 
-    public ScenarioItem(int scenarioId, int playlistId, int displayOrder, int areaId) {
+    public ScenarioItem(int scenarioId, int playlistId, int displayOrder, int layoutId, int areaId) {
         this.scenarioId = scenarioId;
         this.playlistId = playlistId;
         this.displayOrder = displayOrder;
+        this.layoutId = layoutId;
         this.areaId = areaId;
     }
 
@@ -72,6 +76,14 @@ public class ScenarioItem implements Comparable<ScenarioItem>{
         this.displayOrder = displayOrder;
     }
 
+    public int getLayoutId() {
+        return layoutId;
+    }
+
+    public void setLayoutId(int layoutId) {
+        this.layoutId = layoutId;
+    }
+
     public int getAreaId() {
         return areaId;
     }
@@ -88,4 +100,5 @@ public class ScenarioItem implements Comparable<ScenarioItem>{
         return thisDisplayorder - compareDisplayorder;
 
     }
+
 }

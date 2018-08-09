@@ -19,17 +19,17 @@ import com.example.administrator.dssproject.DataBase.PlaylistItem;
 import com.example.administrator.dssproject.DataBase.ScenarioItem;
 import com.example.administrator.dssproject.MainActivity;
 import com.example.administrator.dssproject.R;
-import com.example.administrator.dssproject.Utils.ImageVideoView;
+import com.example.administrator.dssproject.Utils.MediaView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.administrator.dssproject.Time.ScheduleQueue.ARG_SCENARIO_ID;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ConstrainFragment extends Fragment {
+
+    private static final String ARG_SCENARIO_ID = "argScenarioId";
 
     private int mScheduleId;
     @NonNull
@@ -37,8 +37,8 @@ public class ConstrainFragment extends Fragment {
     private List<MediaSrc> mVideoPaths20 = new ArrayList<>();
 
 
-    ImageVideoView video1;
-    ImageVideoView video2;
+    MediaView video1;
+    MediaView video2;
 //    VideoView video3;
 //    VideoView video4;
 

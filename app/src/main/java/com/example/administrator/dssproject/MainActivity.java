@@ -7,11 +7,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,21 +22,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.VideoView;
 
 import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
 import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.Fragment.ControlFragment;
-import com.example.administrator.dssproject.Fragment.Landscape2AreaFragment;
-import com.example.administrator.dssproject.Fragment.Landscape4AreaFragment;
+import com.squareup.okhttp.internal.DiskLruCache;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG = "MainActivity";
     public static FragmentManager fragmentManager;
     public static AppDatabase myAppDatabase;
-    private static int boxId;
+
 
     private final BroadcastReceiver mAlarmReceiver = new BroadcastReceiver() {
         @Override
@@ -58,13 +58,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-
+        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences("myBox", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("appStatus", Boolean.parseBoolean("false"));
         shouldAskPermissionWrite();
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
+                int BOXID = 0;
+                SharedPreferences sharedPreferences = getSharedPreferences("myBox", Context.MODE_PRIVATE);
+                int boxId = sharedPreferences.getInt("boxid", BOXID);
+                if(boxId == 0){
+                    Intent intent = new Intent(MainActivity.this, BoxActivity.class);
+                    startActivity(intent);
+                }else{
+                    boolean checkAppStatus = false;
+                    SharedPreferences sharedPreferences1 = getSharedPreferences("myBox", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences1.edit();
+                    editor.putBoolean("appStatus", Boolean.parseBoolean("false"));
+                    editor.commit();
+
+                    ApiData.getDataFromAPI(MainActivity.this, boxId, checkAppStatus);
+                }
+
+                /*List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
                 if (boxes.size() == 0) {
                     Intent intent = new Intent(MainActivity.this, BoxActivity.class);
                     startActivity(intent);
@@ -72,18 +89,15 @@ public class MainActivity extends AppCompatActivity {
                     boxes = MainActivity.myAppDatabase.boxDAO().getBox();
                     int boxId = boxes.get(0).getBoxId();
                     ApiData.getDataFromAPI(MainActivity.this, boxId);
-                }
+                }*/
             }
         }, 5000);
-
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         fragmentManager = getSupportFragmentManager();
         myAppDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "dssdb")
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
-
-
     }
 
     @Override
@@ -97,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         unregisterReceiver(mAlarmReceiver);
     }
+
+
 
     //**************************************************************//
     //**********************************************Supporter****************************//
@@ -117,34 +133,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void scheduleApiCalls() {
-        Handler handler = new Handler();
-        for (int i = 0; i < 48; i++) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    List<Box> boxList = MainActivity.myAppDatabase.boxDAO().getBox();
-                    int boxId = boxList.get(0).boxId;
-                    ApiData.getDataFromAPI(MainActivity.this, boxId);
-                }
-            },TimeUnit.MINUTES.toMillis(30));
-        }
-        scheduleApiCalls();
-    }
 
-    public static void getLayout(int layoutId, int scenarioId) {
-        Fragment fragment = ControlFragment.newInstance(scenarioId, layoutId);
-//        switch (layoutId) {
-//            case 10:
-//                fragment = Landscape2AreaFragment.newInstance(scenarioId);
-//                break;
-//            case 29:
-//                fragment = Landscape4AreaFragment.newInstance(scenarioId);
-//                break;
-//            default:
-//                throw new IllegalArgumentException("Unknown layout ID");
-//        }
-//
+    public static void getLayout(ControlFragment.ScheduleInfo scheduleInfo) {
+        Fragment fragment = ControlFragment.newInstance(scheduleInfo);
         MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
                 .addToBackStack(null).commitAllowingStateLoss();
     }
@@ -165,30 +156,10 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         100);
             }
-        } else {
-
         }
     }
 
-    public void shouldAskPermissionRead() {
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        100);
-            }
-        } else {
-
-        }
-    }
 
     private boolean isConnectingToInternet() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -200,11 +171,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
     }
 
-    public List<MediaSrc> getAllMediaSrc() {
-        List<MediaSrc> mediaSrcList = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
-        return mediaSrcList;
-    }
 }
 
 //List all Schedule

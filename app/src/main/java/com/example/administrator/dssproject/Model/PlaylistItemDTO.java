@@ -5,28 +5,28 @@ import com.google.gson.annotations.SerializedName;
 public class PlaylistItemDTO {
 
     @SerializedName("playlist_item_id")
-    public int playlistItemId;
+    private int playlistItemId;
 
     @SerializedName("mediasrc_id")
-    public int mediaSrcId;
+    private int mediaSrcId;
 
     @SerializedName("display_order_media")
-    public int displayOrder;
+    private int displayOrder;
 
     @SerializedName("duration")
-    public long duration;
+    private long duration;
 
     @SerializedName("url_media")
-    public String urlMedia;
+    private String urlMedia;
 
     @SerializedName("title_media")
-    public String title;
+    private String title;
 
     @SerializedName("extension_media")
-    public String extensionMedia;
+    private String extensionMedia;
 
     @SerializedName("type_id")
-    public int typeId;
+    private int typeId;
 
     public PlaylistItemDTO() {
     }
