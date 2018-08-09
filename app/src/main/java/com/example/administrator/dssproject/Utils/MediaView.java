@@ -1,6 +1,7 @@
 package com.example.administrator.dssproject.Utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -67,7 +68,8 @@ public class MediaView extends FrameLayout {
         mVideoView.setLayoutParams(layoutParams);
 
         mTextView = new TextView(context);
-        mTextView.setTextColor(Color.BLACK);
+        mTextView.setTextColor(Color.WHITE);
+        mTextView.setTextSize(20);
         mTextView.setSingleLine();
         mTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
         mTextView.setMarqueeRepeatLimit(-1);
@@ -139,6 +141,7 @@ public class MediaView extends FrameLayout {
     public void stopMedia() {
         mVideoView.stopPlayback();
         showPlaceholder();
+
     }
 
     public void startMedia() {

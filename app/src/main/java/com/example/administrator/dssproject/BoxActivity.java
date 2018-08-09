@@ -1,6 +1,8 @@
 package com.example.administrator.dssproject;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,13 +25,19 @@ public class BoxActivity extends AppCompatActivity {
         mEditText = findViewById(R.id.editText);
         mButton = findViewById(R.id.btnAddBoxId);
 
+
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String boxIdString = mEditText.getText().toString();
+                SharedPreferences sharedPreferences = getSharedPreferences("myBox", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("boxid", Integer.parseInt(mEditText.getText().toString()));
+                editor.commit();
+
+                /*String boxIdString = mEditText.getText().toString();
                 int boxId = Integer.parseInt(boxIdString);
                 Box box = new Box(boxId);
-                MainActivity.myAppDatabase.boxDAO().addBox(box);
+                MainActivity.myAppDatabase.boxDAO().addBox(box);*/
                 Toast.makeText(BoxActivity.this, "Add successfully", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(BoxActivity.this, MainActivity.class);
                 startActivity(intent);

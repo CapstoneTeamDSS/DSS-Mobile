@@ -3,6 +3,7 @@ package com.example.administrator.dssproject.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -110,6 +111,7 @@ public class ControlFragment extends Fragment {
             mVideoPaths.put("area_"+i, mediaSrcList);
             mPlaylistItemLists.put("area_"+i, playlistItemList);
             playlistItemLists.put("area_"+i, playlistItemList); //co ve la ko can thiet
+
         }
 
         List<MediaView> mediaViews = new ArrayList<>();
@@ -121,6 +123,10 @@ public class ControlFragment extends Fragment {
             mediaViews.add(mediaView);
 
         }
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("myBox", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("appStatus", Boolean.parseBoolean("true"));
+        editor.commit();
 
         scheduleMediaShowing(mediaViews);
         scheduleMediaStop(mediaViews);
@@ -130,15 +136,27 @@ public class ControlFragment extends Fragment {
     }
 
     private void scheduleMediaDownloader() {
-        long delayed = mScheduleInfo.endTime - System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(30);
-        if (delayed < 0) {
-            delayed = 0;
-        }
+//        long delayed = mScheduleInfo.endTime - System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(30);
+//        if (delayed < 0) {
+//            delayed = 0;
+//        }
 
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
+
+                int BOXID = 0;
+                SharedPreferences sharedPreferences = mContext.getSharedPreferences("myBox", Context.MODE_PRIVATE);
+                int boxId = sharedPreferences.getInt("boxid", BOXID);
+                if(boxId == 0){
+                    Intent intent = new Intent(mContext, BoxActivity.class);
+                    startActivity(intent);
+                }else{
+                    boolean appStatus = true;
+                    ApiData.getDataFromAPI(mContext, boxId, appStatus);
+                }
+
+               /* List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
                 if (boxes.size() == 0) {
                     Intent intent = new Intent(mContext, BoxActivity.class);
                     startActivity(intent);
@@ -146,9 +164,9 @@ public class ControlFragment extends Fragment {
                     boxes = MainActivity.myAppDatabase.boxDAO().getBox();
                     int boxId = boxes.get(0).getBoxId();
                     ApiData.getDataFromAPI(mContext, boxId);
-                }
+                }*/
             }
-        }, delayed);
+        },TimeUnit.MINUTES.toMillis(1));
     }
 
     private void scheduleMediaShowing(@NonNull final List<MediaView> mediaViews) {
@@ -172,6 +190,10 @@ public class ControlFragment extends Fragment {
             @Override
             public void run() {
                 for (MediaView view : mediaViews) {
+                    SharedPreferences sharedPreferences = mContext.getSharedPreferences("myBox", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("appStatus", Boolean.parseBoolean("false"));
+                    editor.commit();
                     view.stopMedia();
                 }
             }

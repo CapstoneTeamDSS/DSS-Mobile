@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -27,6 +28,7 @@ import com.example.administrator.dssproject.DataBase.AppDatabase;
 import com.example.administrator.dssproject.DataBase.Box;
 import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.Fragment.ControlFragment;
+import com.squareup.okhttp.internal.DiskLruCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG = "MainActivity";
     public static FragmentManager fragmentManager;
     public static AppDatabase myAppDatabase;
-    private static int boxId;
+
 
     private final BroadcastReceiver mAlarmReceiver = new BroadcastReceiver() {
         @Override
@@ -56,25 +58,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-
+        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences("myBox", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("appStatus", Boolean.parseBoolean("false"));
         shouldAskPermissionWrite();
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
+                int BOXID = 0;
+                SharedPreferences sharedPreferences = getSharedPreferences("myBox", Context.MODE_PRIVATE);
+                int boxId = sharedPreferences.getInt("boxid", BOXID);
+                if(boxId == 0){
+                    Intent intent = new Intent(MainActivity.this, BoxActivity.class);
+                    startActivity(intent);
+                }else{
+                    boolean checkAppStatus = false;
+                    SharedPreferences sharedPreferences1 = getSharedPreferences("myBox", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences1.edit();
+                    editor.putBoolean("appStatus", Boolean.parseBoolean("false"));
+                    editor.commit();
+
+                    ApiData.getDataFromAPI(MainActivity.this, boxId, checkAppStatus);
+                }
+
+                /*List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
                 if (boxes.size() == 0) {
                     Intent intent = new Intent(MainActivity.this, BoxActivity.class);
                     startActivity(intent);
                 } else {
                     boxes = MainActivity.myAppDatabase.boxDAO().getBox();
                     int boxId = boxes.get(0).getBoxId();
-                    boolean preCall = false;
                     ApiData.getDataFromAPI(MainActivity.this, boxId);
-                }
+                }*/
             }
         }, 5000);
-
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         fragmentManager = getSupportFragmentManager();
         myAppDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "dssdb")
@@ -94,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         unregisterReceiver(mAlarmReceiver);
     }
+
+
 
     //**************************************************************//
     //**********************************************Supporter****************************//
