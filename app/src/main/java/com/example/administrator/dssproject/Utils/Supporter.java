@@ -35,57 +35,43 @@ public class Supporter {
             HttpURLConnection c = (HttpURLConnection) url.openConnection();
             c.setRequestMethod("GET");
             c.connect();
-
             if (c.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 Log.e(TAG, "Server returned HTTP " + c.getResponseCode()
                         + " " + c.getResponseMessage());
-
             }
-
             if (new CheckForSDCard().isExternalStorageWritable()) {
                 apkStorage = new File(
                         Environment.getExternalStorageDirectory() + "/"
                                 + Supporter.downloadDirectory);
-
             } else
                 Toast.makeText(context, "Oops!! There is no SD Card.", Toast.LENGTH_SHORT).show();
-
             if (!apkStorage.exists()) {
                 apkStorage.mkdir();
                 Log.e(TAG, "Directory Created.");
             }
-
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             downloadFileName = downloadFileName + " " + timestamp;
             downloadFileName = downloadFileName.replace(" ","").trim();
             downloadFileName = downloadFileName.replace(":","").trim();
             downloadFileName = downloadFileName.replace("-","").trim();
-
             outputFile = new File(apkStorage, downloadFileName + downloadTailFileName);//Create Output file in Main File
-
             //Create New File if not present
             if (!outputFile.exists()) {
                 outputFile.createNewFile();
                 Log.e(TAG, "File Created");
             }
-
             Log.e("File download",outputFile.getAbsolutePath());
             FileOutputStream fos = new FileOutputStream(outputFile);//Get OutputStream for NewFile Location
-
             InputStream is = c.getInputStream();//Get InputStream for connection
-
             byte[] buffer = new byte[1024];//Set buffer type
             int len1 = 0;//init length
             while ((len1 = is.read(buffer)) != -1) {
                 fos.write(buffer, 0, len1);//Write new file
             }
-
             //Close all connection after doing task
             fos.close();
             is.close();
-
         } catch (Exception e) {
-
             //Read exception if something went wrong
             e.printStackTrace();
             outputFile = null;

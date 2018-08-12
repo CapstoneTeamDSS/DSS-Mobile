@@ -15,6 +15,8 @@ public class ScenarioDTO {
     @SerializedName("schedule_title")
     private String title;
 
+    @SerializedName("audio_area")
+    private int audioArea;
 
     @SerializedName("scenario_items")
     private List<ScenarioItemDTO> scenarioItems;
@@ -22,10 +24,11 @@ public class ScenarioDTO {
     public ScenarioDTO() {
     }
 
-    public ScenarioDTO(int scenarioId, int layoutId, String title, List<ScenarioItemDTO> scenarioItems) {
+    public ScenarioDTO(int scenarioId, int layoutId, String title, int audioArea, List<ScenarioItemDTO> scenarioItems) {
         this.scenarioId = scenarioId;
         this.layoutId = layoutId;
         this.title = title;
+        this.audioArea = audioArea;
         this.scenarioItems = scenarioItems;
     }
 
@@ -59,5 +62,13 @@ public class ScenarioDTO {
 
     public void setScenarioItems(List<ScenarioItemDTO> scenarioItems) {
         this.scenarioItems = scenarioItems;
+    }
+
+    public int getAudioArea() {
+        return audioArea;
+    }
+
+    public void setAudioArea(int audioArea) {
+        this.audioArea = audioArea;
     }
 }

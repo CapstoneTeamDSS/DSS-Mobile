@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A simple {@link Fragment} subclass.
  */
+
 public class ControlFragment extends Fragment {
 
     public static final String ARG_SCHEDULE_INFO = "argSenarioInfo";
@@ -70,6 +71,8 @@ public class ControlFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mContext = container.getContext();
+
+        int audioArea = MainActivity.myAppDatabase.scenarioDAO().getAudioArea(mScheduleInfo.scenarioId);
 
         String layout_name = "layout_" + mScheduleInfo.layoutId;
         int layoutId = getResources().getIdentifier("com.example.administrator.dssproject:layout/" + layout_name, null, null);
@@ -116,10 +119,15 @@ public class ControlFragment extends Fragment {
 
         List<MediaView> mediaViews = new ArrayList<>();
         for (int i : areaIds) {
+            boolean isMute = false;
+            if(i != audioArea){
+                isMute = true;
+            }
             String area_name = "area_" + i;
             int areaId = getResources().getIdentifier("com.example.administrator.dssproject:id/" + area_name, null, null);
             final MediaView mediaView = view.findViewById(areaId);
-            mediaView.setMediaSources(mPlaylistItemLists.get("area_"+i), mVideoPaths.get("area_"+i));
+
+            mediaView.setMediaSources(mPlaylistItemLists.get("area_"+i), mVideoPaths.get("area_"+i), isMute);
             mediaViews.add(mediaView);
 
         }
@@ -156,7 +164,7 @@ public class ControlFragment extends Fragment {
                     ApiData.getDataFromAPI(mContext, boxId, appStatus);
                 }
 
-               /* List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
+                /*List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();
                 if (boxes.size() == 0) {
                     Intent intent = new Intent(mContext, BoxActivity.class);
                     startActivity(intent);

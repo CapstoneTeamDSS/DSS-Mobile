@@ -187,6 +187,7 @@ public class ApiData {
         int scenarioId = scenarioDTO.getScenarioId();
         int layoutId = scenarioDTO.getLayoutId();
         String title = scenarioDTO.getTitle();
+        int audioArea = scenarioDTO.getAudioArea();
         long addTime = System.currentTimeMillis();
 
         //Insert Layout to sqlite
@@ -203,7 +204,7 @@ public class ApiData {
         }
 
         //Insert Scenario to sqlite
-        Scenario scenario = new Scenario(scenarioId, title, layoutId, addTime);
+        Scenario scenario = new Scenario(scenarioId, title, layoutId, audioArea, addTime);
         try {
             boolean checkScenarioId = checkDuplicateScenario(scenarioId, layoutId);
             Scenario scenarioCheck = MainActivity.myAppDatabase.scenarioDAO().getLastScenario();
