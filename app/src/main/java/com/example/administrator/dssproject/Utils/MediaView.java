@@ -45,7 +45,7 @@ public class MediaView extends FrameLayout {
         super(context);
         init(null, 0);
     }
-    
+
     public MediaView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
@@ -111,7 +111,7 @@ public class MediaView extends FrameLayout {
         switch (source.getTypeID()) {
             case 1:
                 // image
-                mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                mImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 mImageView.setImageURI(Uri.parse(source.getUrlLocal()));
                 new Handler().postDelayed(new Runnable() {
                     @Override

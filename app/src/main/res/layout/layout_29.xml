@@ -11,6 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.example.administrator.dssproject.Utils.MediaView
+            android:id="@+id/area_46"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <android.support.constraint.Guideline
             android:id="@+id/gl_vertical"
             android:layout_width="1dp"
@@ -62,6 +72,7 @@
             app:layout_constraintLeft_toRightOf="@id/gl_vertical"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/gl_horizontal" />
+
 
 
 

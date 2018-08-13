@@ -10,10 +10,12 @@ import com.example.administrator.dssproject.DataBase.ScenarioItem;
 import com.example.administrator.dssproject.SDCard.CheckForSDCard;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
@@ -122,4 +124,6 @@ public class Supporter {
         String joined = sb.toString();
         return joined;
     }
+
+
 }

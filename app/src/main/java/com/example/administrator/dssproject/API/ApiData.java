@@ -280,7 +280,8 @@ public class ApiData {
                 int typeId = playlistItemDTO.getTypeId();
                 String url = playlistItemDTO.getUrlMedia();
                 String extension = playlistItemDTO.getExtensionMedia();
-                MediaSrc mediaSrc = new MediaSrc(mediaSrcId, titleMedia, typeId, url, extension, "F", "L");
+                String hashCode = playlistItemDTO.getHashCode();
+                MediaSrc mediaSrc = new MediaSrc(mediaSrcId, titleMedia, typeId, url, extension, "F", hashCode, "L");
                 String urlLocal = "";
                 try {
                     boolean checkMediaSrc = checkDuplicateMediaSrc(mediaSrcId);
