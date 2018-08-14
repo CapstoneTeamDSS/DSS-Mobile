@@ -98,7 +98,7 @@ public class ConstrainFragment extends Fragment {
         List<PlaylistItem> playlistItemList19 = new ArrayList<PlaylistItem>();
         List<PlaylistItem> playlistItemList20 = new ArrayList<PlaylistItem>();
 
-        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemLIistByScenarioId(mScheduleId);
+        List<ScenarioItem> scenarioItemList = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemListByScenarioId(mScheduleId);
         for(int i = 0; i < scenarioItemList.size(); i++){
             if(scenarioItemList.get(i).getAreaId() == 19){
                 scenarioItemList19 = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemListByAreaId(19);

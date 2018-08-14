@@ -5,31 +5,25 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.administrator.dssproject.DataBase.PlaylistItem;
-import com.example.administrator.dssproject.DataBase.ScenarioItem;
 import com.example.administrator.dssproject.SDCard.CheckForSDCard;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.MessageDigest;
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
 public class Supporter {
 
-    public static final String downloadDirectory = "DSSDownloadData";
+    private static final String downloadDirectory = "DSSDownloadData";
 //    public static final String downloadVideo = "http://androhub.com/demo/demo.mp4";
 
 
-    public static String savingDataToSDCard(Context context, File outputFile, File apkStorage, String downloadUrl, String downloadFileName, String downloadTailFileName ){
-        String newUrl = "";
+    public static String savingDataToSDCard(Context context, File apkStorage, String downloadUrl, String downloadFileName, String downloadTailFileName){
+        String newUrl;
         String pathname = Environment.getExternalStorageDirectory() + "/"
                 + Supporter.downloadDirectory;
         try {
@@ -41,7 +35,7 @@ public class Supporter {
                 Log.e(TAG, "Server returned HTTP " + c.getResponseCode()
                         + " " + c.getResponseMessage());
             }
-            if (new CheckForSDCard().isExternalStorageWritable()) {
+            if (CheckForSDCard.isExternalStorageWritable()) {
                 apkStorage = new File(
                         Environment.getExternalStorageDirectory() + "/"
                                 + Supporter.downloadDirectory);
@@ -56,13 +50,13 @@ public class Supporter {
             downloadFileName = downloadFileName.replace(" ","").trim();
             downloadFileName = downloadFileName.replace(":","").trim();
             downloadFileName = downloadFileName.replace("-","").trim();
-            outputFile = new File(apkStorage, downloadFileName + downloadTailFileName);//Create Output file in Main File
+            File outputFile = new File(apkStorage, downloadFileName + downloadTailFileName);
             //Create New File if not present
             if (!outputFile.exists()) {
                 outputFile.createNewFile();
                 Log.e(TAG, "File Created");
             }
-            Log.e("File download",outputFile.getAbsolutePath());
+            Log.e("File download", outputFile.getAbsolutePath());
             FileOutputStream fos = new FileOutputStream(outputFile);//Get OutputStream for NewFile Location
             InputStream is = c.getInputStream();//Get InputStream for connection
             byte[] buffer = new byte[1024];//Set buffer type
@@ -76,11 +70,9 @@ public class Supporter {
         } catch (Exception e) {
             //Read exception if something went wrong
             e.printStackTrace();
-            outputFile = null;
             Log.e(TAG, "Download Error Exception " + e.getMessage());
         }
         newUrl = pathname + "/" + downloadFileName + downloadTailFileName;
-//        newUrl =  outputFile.getAbsolutePath();
         return newUrl;
     }
 
@@ -97,8 +89,7 @@ public class Supporter {
 
 
     public static String getNameFile(String path){
-        String foo = path;
-        String[] split = foo.split("/");
+        String[] split = path.split("/");
         StringBuilder sb = new StringBuilder();
         /*for (int i = 0; i < split.length; i++) {
             sb.append(split[split.length - 1]);
@@ -107,13 +98,11 @@ public class Supporter {
             }
         }*/
         sb.append(split[split.length - 1]);
-        String joined = sb.toString();
-        return joined;
+        return sb.toString();
     }
 
     public static String getPathFolder(String path){
-        String foo = path;
-        String[] split = foo.split("/");
+        String[] split = path.split("/");
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < split.length-1; i++) {
             sb.append(split[i]);
@@ -121,8 +110,7 @@ public class Supporter {
                 sb.append("/");
             }
         }
-        String joined = sb.toString();
-        return joined;
+        return sb.toString();
     }
 
 
