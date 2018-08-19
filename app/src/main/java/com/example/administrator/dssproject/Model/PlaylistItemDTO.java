@@ -19,6 +19,9 @@ public class PlaylistItemDTO {
     @SerializedName("url_media")
     private String urlMedia;
 
+    @SerializedName("security_hash")
+    private String hashCode;
+
     @SerializedName("title_media")
     private String title;
 
@@ -31,12 +34,13 @@ public class PlaylistItemDTO {
     public PlaylistItemDTO() {
     }
 
-    public PlaylistItemDTO(int playlistItemId, int mediaSrcId, int displayOrder, long duration, String urlMedia, String title, String extensionMedia, int typeId) {
+    public PlaylistItemDTO(int playlistItemId, int mediaSrcId, int displayOrder, long duration, String urlMedia, String hashCode, String title, String extensionMedia, int typeId) {
         this.playlistItemId = playlistItemId;
         this.mediaSrcId = mediaSrcId;
         this.displayOrder = displayOrder;
         this.duration = duration;
         this.urlMedia = urlMedia;
+        this.hashCode = hashCode;
         this.title = title;
         this.extensionMedia = extensionMedia;
         this.typeId = typeId;
@@ -104,5 +108,13 @@ public class PlaylistItemDTO {
 
     public void setTypeId(int typeId) {
         this.typeId = typeId;
+    }
+
+    public String getHashCode() {
+        return hashCode;
+    }
+
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
     }
 }

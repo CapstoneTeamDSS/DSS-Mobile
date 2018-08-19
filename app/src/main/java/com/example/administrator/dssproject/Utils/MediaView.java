@@ -34,7 +34,6 @@ public class MediaView extends FrameLayout {
     private ImageView mImageView;
     private VideoView mVideoView;
     private TextView mTextView;
-//    private MediaPlayer mMediaPlayer;
 
     @NonNull
     private List<PlaylistItem> mPlaylistItems;
@@ -76,6 +75,8 @@ public class MediaView extends FrameLayout {
         mTextView.setSelected(true);
         mTextView.setLayoutParams(layoutParams);
 
+
+
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
@@ -88,9 +89,17 @@ public class MediaView extends FrameLayout {
         addView(mTextView);
     }
 
-    public void setMediaSources(@NonNull List<PlaylistItem> playlistItems, @NonNull List<MediaSrc> sources) {
+    public void setMediaSources(@NonNull List<PlaylistItem> playlistItems, @NonNull List<MediaSrc> sources, boolean isMute) {
         mPlaylistItems = playlistItems;
         mSources = sources;
+        if(isMute){
+            mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mediaPlayer.setVolume(0f, 0f);
+                }
+            });
+        }
     }
 
     private void showNextMedia() {
@@ -102,7 +111,7 @@ public class MediaView extends FrameLayout {
         switch (source.getTypeID()) {
             case 1:
                 // image
-                mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                mImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 mImageView.setImageURI(Uri.parse(source.getUrlLocal()));
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -112,6 +121,12 @@ public class MediaView extends FrameLayout {
                 }, mPlaylistItems.get(mCurIndex).getDuration() * 1000);
                 break;
             case 2:
+                // video
+                mVideoView.setVideoPath(source.getUrlLocal());
+                mVideoView.requestFocus();
+                mVideoView.start();
+                break;
+            case 3:
                 // video
                 mVideoView.setVideoPath(source.getUrlLocal());
                 mVideoView.requestFocus();
@@ -134,7 +149,7 @@ public class MediaView extends FrameLayout {
 
     private void updateVisibility(int mediaType) {
         mImageView.setVisibility(mediaType == 1 ? VISIBLE : INVISIBLE);
-        mVideoView.setVisibility(mediaType == 2 ? VISIBLE : INVISIBLE);
+        mVideoView.setVisibility(mediaType == 2 || mediaType == 3 ? VISIBLE : INVISIBLE);
         mTextView.setVisibility(mediaType == 4 ? VISIBLE : INVISIBLE);
     }
 
@@ -183,10 +198,9 @@ public class MediaView extends FrameLayout {
         @Override
         protected void onPostExecute(String content) {
             super.onPostExecute(content);
-            content += content;
-            content += content;
-            content += content;
+
             mTextView.setText(content);
         }
     }
+
 }

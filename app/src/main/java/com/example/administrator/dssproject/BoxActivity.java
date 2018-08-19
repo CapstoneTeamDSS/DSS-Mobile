@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.administrator.dssproject.DataBase.Box;
+import com.example.administrator.dssproject.Utils.PreferenceUtil;
 
 public class BoxActivity extends AppCompatActivity {
 
@@ -29,10 +30,8 @@ public class BoxActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences sharedPreferences = getSharedPreferences("myBox", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putInt("boxid", Integer.parseInt(mEditText.getText().toString()));
-                editor.commit();
+                int boxId = Integer.parseInt(mEditText.getText().toString());
+                PreferenceUtil.saveBoxId(BoxActivity.this, boxId);
 
                 /*String boxIdString = mEditText.getText().toString();
                 int boxId = Integer.parseInt(boxIdString);

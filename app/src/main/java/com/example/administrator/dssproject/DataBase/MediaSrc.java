@@ -27,21 +27,23 @@ public class MediaSrc {
     @ColumnInfo(name = "media_extension")
     private String extension;
 
-
     @ColumnInfo(name = "media_urlLocal")
     private String urlLocal;
 
+    @ColumnInfo(name = "hash_code")
+    private String hashCode;
 
     @ColumnInfo(name = "media_last_use")
     private String lastUsed;
 
-    public MediaSrc(int mediaSrcID, String title, int typeID, String url, String extension, String urlLocal, String lastUsed) {
+    public MediaSrc(int mediaSrcID, String title, int typeID, String url, String extension, String urlLocal, String hashCode, String lastUsed) {
         this.mediaSrcID = mediaSrcID;
         this.title = title;
         this.typeID = typeID;
         this.url = url;
         this.extension = extension;
         this.urlLocal = urlLocal;
+        this.hashCode = hashCode;
         this.lastUsed = lastUsed;
     }
 
@@ -104,5 +106,13 @@ public class MediaSrc {
 
     public void setLastUsed(String lastUsed) {
         this.lastUsed = lastUsed;
+    }
+
+    public String getHashCode() {
+        return hashCode;
+    }
+
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
     }
 }

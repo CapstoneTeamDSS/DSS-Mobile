@@ -27,14 +27,18 @@ public class Scenario {
     @ColumnInfo(name = "layout_id")
     private int layoutId;
 
+    @ColumnInfo(name = "audio_area")
+    private int audioArea;
+
     @ColumnInfo(name = "add_time")
     private long addTime;
 
 
-    public Scenario(int scenarioId, String title, int layoutId, long addTime) {
+    public Scenario(int scenarioId, String title, int layoutId, int audioArea,  long addTime) {
         this.scenarioId = scenarioId;
         this.title = title;
         this.layoutId = layoutId;
+        this.audioArea = audioArea;
         this.addTime = addTime;
     }
 
@@ -68,5 +72,13 @@ public class Scenario {
 
     public void setAddTime(long addTime) {
         this.addTime = addTime;
+    }
+
+    public int getAudioArea() {
+        return audioArea;
+    }
+
+    public void setAudioArea(int audioArea) {
+        this.audioArea = audioArea;
     }
 }

@@ -31,4 +31,8 @@ public interface ScenarioDAO {
 
     @Query("SELECT * FROM scenario WHERE add_time = (SELECT MAX(add_time) FROM scenario)")
     public Scenario getLastScenario();
+
+    @Query("SELECT audio_area FROM scenario WHERE scenario_id = :id ")
+    public int getAudioArea(int id);
+
 }

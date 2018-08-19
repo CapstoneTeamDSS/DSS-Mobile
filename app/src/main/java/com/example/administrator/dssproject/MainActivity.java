@@ -1,47 +1,37 @@
 package com.example.administrator.dssproject;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
-import com.example.administrator.dssproject.DataBase.Box;
-import com.example.administrator.dssproject.DataBase.MediaSrc;
 import com.example.administrator.dssproject.Fragment.ControlFragment;
-import com.squareup.okhttp.internal.DiskLruCache;
+import com.example.administrator.dssproject.Utils.PreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String ALARM_INTENT_FILTER_ACTION = "alarmIntentFilter";
 
-    final static String TAG = "MainActivity";
     public static FragmentManager fragmentManager;
     public static AppDatabase myAppDatabase;
 
@@ -58,26 +48,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences("myBox", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("appStatus", Boolean.parseBoolean("false"));
+
+        PreferenceUtil.saveAppStatus(MainActivity.this, false);
+
         shouldAskPermissionWrite();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                int BOXID = 0;
-                SharedPreferences sharedPreferences = getSharedPreferences("myBox", Context.MODE_PRIVATE);
-                int boxId = sharedPreferences.getInt("boxid", BOXID);
-                if(boxId == 0){
+                int boxId = PreferenceUtil.getBoxId(MainActivity.this);
+                if (boxId == PreferenceUtil.DEFAULT_BOX_ID) {
                     Intent intent = new Intent(MainActivity.this, BoxActivity.class);
                     startActivity(intent);
-                }else{
+                } else {
                     boolean checkAppStatus = false;
-                    SharedPreferences sharedPreferences1 = getSharedPreferences("myBox", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences1.edit();
-                    editor.putBoolean("appStatus", Boolean.parseBoolean("false"));
-                    editor.commit();
-
+                    PreferenceUtil.saveAppStatus(MainActivity.this, checkAppStatus);
                     ApiData.getDataFromAPI(MainActivity.this, boxId, checkAppStatus);
                 }
 
@@ -92,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 }*/
             }
         }, 5000);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
         fragmentManager = getSupportFragmentManager();
         myAppDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "dssdb")
                 .fallbackToDestructiveMigration()
@@ -111,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         unregisterReceiver(mAlarmReceiver);
     }
-
 
 
     //**************************************************************//
@@ -158,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
 
     private boolean isConnectingToInternet() {

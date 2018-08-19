@@ -48,7 +48,7 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             }
         }
         for (int i = 0; i < downloadQueue.size(); i++) {
-            String urlLocal = Supporter.savingDataToSDCard(context, outputFile, apkStorage, downloadQueue.get(i).getUrl(),
+            String urlLocal = Supporter.savingDataToSDCard(context, apkStorage, downloadQueue.get(i).getUrl(),
                     downloadQueue.get(i).getTitle(), downloadQueue.get(i).getExtension());
             downloadQueue.get(i).setUrlLocal(urlLocal);
         }
