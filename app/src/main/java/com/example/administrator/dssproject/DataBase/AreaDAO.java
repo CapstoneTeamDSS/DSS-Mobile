@@ -27,4 +27,7 @@ public interface AreaDAO {
 
     @Query("SELECT visual_type_id FROM area WHERE area_id = :id")
     public int getVisualTypeId(int id);
+
+    @Query("DELETE FROM area WHERE layout_id = :id")
+    public int deleteAreaByLayoutId(int id);
 }

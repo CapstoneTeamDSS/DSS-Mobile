@@ -59,7 +59,6 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
 
 //        listMedia = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
 
-
         int layoutId = MainActivity.myAppDatabase.scenarioDAO().getAScenario(mScenarioId).getLayoutId();
         MainActivity.getLayout(new ControlFragment.ScheduleInfo(mScenarioId, layoutId, mStartTime, mEndTime));
 
@@ -75,8 +74,6 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
 //            MainActivity.fragmentManager.beginTransaction().add(R.id.fragment_container, new HomeFragment()).commit();
 
     }
-
-
     //go to assigned fragment by LayoutId
     @Override
     protected void onPostExecute(Void avoid) {

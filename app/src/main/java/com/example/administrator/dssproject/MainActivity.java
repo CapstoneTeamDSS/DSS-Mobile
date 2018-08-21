@@ -23,6 +23,7 @@ import com.example.administrator.dssproject.API.ApiData;
 import com.example.administrator.dssproject.DataBase.AppDatabase;
 import com.example.administrator.dssproject.Fragment.ControlFragment;
 import com.example.administrator.dssproject.Utils.PreferenceUtil;
+import com.example.administrator.dssproject.Utils.Supporter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static FragmentManager fragmentManager;
     public static AppDatabase myAppDatabase;
+
 
 
     private final BroadcastReceiver mAlarmReceiver = new BroadcastReceiver() {

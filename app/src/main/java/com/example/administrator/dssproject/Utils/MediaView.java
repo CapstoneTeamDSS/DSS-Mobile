@@ -103,11 +103,13 @@ public class MediaView extends FrameLayout {
     }
 
     private void showNextMedia() {
+        if(mSources.size() == 0){
+            showPlaceholder();
+        }
         if(mCurIndex == mSources.size()){
             mCurIndex = 0;
         }
         MediaSrc source = mSources.get(mCurIndex);
-        List<MediaSrc> mediaSrcList = mSources;
         switch (source.getTypeID()) {
             case 1:
                 // image

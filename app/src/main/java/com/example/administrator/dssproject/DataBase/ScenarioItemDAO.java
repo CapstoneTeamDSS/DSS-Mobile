@@ -37,4 +37,10 @@ public interface ScenarioItemDAO {
 
     @Query("SELECT * FROM scenarioItem WHERE area_id = :id ORDER BY scenario_display_order ASC")
     public List<ScenarioItem> getScenarioItemListByAreaId(int id);
+
+    @Query("DELETE FROM scenarioItem WHERE scenario_id = :id")
+    public int deleteScenarioItemByScenarioId(int id);
+
+    @Query("SELECT DISTINCT playlist_id FROM scenarioItem WHERE scenario_id = :id")
+    public List<Integer> getPlaylistsOfScenarioByScenarioId(int id);
 }

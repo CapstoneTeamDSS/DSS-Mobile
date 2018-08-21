@@ -12,6 +12,9 @@ public class ScenarioItemDTO {
     @SerializedName("playlist_id")
     private int playlistId;
 
+    @SerializedName("playlist_update_datetime")
+    private long playlistUpdateDateTime;
+
     @SerializedName("display_order_playlist")
     private int displayOderPlaylist;
 
@@ -24,9 +27,10 @@ public class ScenarioItemDTO {
     @SerializedName("playlist_items")
     private List<PlaylistItemDTO> playlistItems;
 
-    public ScenarioItemDTO(int scenarioId, int playlistId, int displayOderPlaylist, int areaId, int visualTypeId, List<PlaylistItemDTO> playlistItems) {
+    public ScenarioItemDTO(int scenarioId, int playlistId, long playlistUpdateDateTime, int displayOderPlaylist, int areaId, int visualTypeId, List<PlaylistItemDTO> playlistItems) {
         this.scenarioId = scenarioId;
         this.playlistId = playlistId;
+        this.playlistUpdateDateTime = playlistUpdateDateTime;
         this.displayOderPlaylist = displayOderPlaylist;
         this.areaId = areaId;
         this.visualTypeId = visualTypeId;
@@ -79,5 +83,13 @@ public class ScenarioItemDTO {
 
     public void setVisualTypeId(int visualTypeId) {
         this.visualTypeId = visualTypeId;
+    }
+
+    public long getPlaylistUpdateDateTime() {
+        return playlistUpdateDateTime;
+    }
+
+    public void setPlaylistUpdate(long playlistUpdateDateTime) {
+        this.playlistUpdateDateTime = playlistUpdateDateTime;
     }
 }

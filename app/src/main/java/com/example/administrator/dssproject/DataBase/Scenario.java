@@ -7,6 +7,8 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 @Entity(tableName = "scenario",
         indices = {@Index(value = "scenario_id", unique = true), @Index("layout_id")},
         primaryKeys = {"scenario_id", "layout_id"},
@@ -24,6 +26,9 @@ public class Scenario {
     @ColumnInfo(name = "scenario_title")
     private String title;
 
+    @ColumnInfo(name = "scenario_update_datetime")
+    private long scenarioUpdateDateTime;
+
     @ColumnInfo(name = "layout_id")
     private int layoutId;
 
@@ -34,9 +39,10 @@ public class Scenario {
     private long addTime;
 
 
-    public Scenario(int scenarioId, String title, int layoutId, int audioArea,  long addTime) {
+    public Scenario(int scenarioId, String title, long scenarioUpdateDateTime, int layoutId, int audioArea,  long addTime) {
         this.scenarioId = scenarioId;
         this.title = title;
+        this.scenarioUpdateDateTime = scenarioUpdateDateTime;
         this.layoutId = layoutId;
         this.audioArea = audioArea;
         this.addTime = addTime;
@@ -80,5 +86,13 @@ public class Scenario {
 
     public void setAudioArea(int audioArea) {
         this.audioArea = audioArea;
+    }
+
+    public long getScenarioUpdateDateTime() {
+        return scenarioUpdateDateTime;
+    }
+
+    public void setScenarioUpdateDateTime(long scenarioUpdateDateTime) {
+        this.scenarioUpdateDateTime = scenarioUpdateDateTime;
     }
 }

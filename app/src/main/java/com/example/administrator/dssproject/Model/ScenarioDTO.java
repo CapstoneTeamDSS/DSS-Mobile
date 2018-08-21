@@ -12,6 +12,9 @@ public class ScenarioDTO {
     @SerializedName("layout_id")
     private int layoutId;
 
+    @SerializedName("scenario_update_datetime")
+    private long scenUpdate;
+
     @SerializedName("schedule_title")
     private String title;
 
@@ -24,9 +27,10 @@ public class ScenarioDTO {
     public ScenarioDTO() {
     }
 
-    public ScenarioDTO(int scenarioId, int layoutId, String title, int audioArea, List<ScenarioItemDTO> scenarioItems) {
+    public ScenarioDTO(int scenarioId, int layoutId, long scenUpdate, String title, int audioArea, List<ScenarioItemDTO> scenarioItems) {
         this.scenarioId = scenarioId;
         this.layoutId = layoutId;
+        this.scenUpdate = scenUpdate;
         this.title = title;
         this.audioArea = audioArea;
         this.scenarioItems = scenarioItems;
@@ -70,5 +74,13 @@ public class ScenarioDTO {
 
     public void setAudioArea(int audioArea) {
         this.audioArea = audioArea;
+    }
+
+    public long getScenUpdate() {
+        return scenUpdate;
+    }
+
+    public void setScenUpdate(long scenUpdate) {
+        this.scenUpdate = scenUpdate;
     }
 }

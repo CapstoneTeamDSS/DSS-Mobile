@@ -6,6 +6,8 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 @Entity(tableName = "scenarioItem",
         indices = {@Index("scenario_id"), @Index("playlist_id")},
         primaryKeys = {"scenario_id", "playlist_id", "layout_id", "area_id"},

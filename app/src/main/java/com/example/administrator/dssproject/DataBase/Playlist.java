@@ -11,8 +11,12 @@ public class Playlist {
     @ColumnInfo(name = "playlist_id")
     private int playlistId;
 
-    public Playlist(int playlistId) {
+    @ColumnInfo(name = "playlist_update_datetime")
+    private long playlistUpdate;
+
+    public Playlist(int playlistId, long playlistUpdate) {
         this.playlistId = playlistId;
+        this.playlistUpdate = playlistUpdate;
     }
 
     public int getPlaylistId() {
@@ -21,5 +25,13 @@ public class Playlist {
 
     public void setPlaylistId(int playlistId) {
         this.playlistId = playlistId;
+    }
+
+    public long getPlaylistUpdate() {
+        return playlistUpdate;
+    }
+
+    public void setPlaylistUpdate(long playlistUpdate) {
+        this.playlistUpdate = playlistUpdate;
     }
 }
