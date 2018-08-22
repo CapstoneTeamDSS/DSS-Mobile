@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DSSProject</string>
+    <string name="app_name">DSS</string>
 
     <string name="downloadStarted">Download Started…</string>
     <string name="downloadCompleted">Download Completed…</string>

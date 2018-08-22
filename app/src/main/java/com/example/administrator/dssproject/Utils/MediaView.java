@@ -146,7 +146,7 @@ public class MediaView extends FrameLayout {
 
     private void showPlaceholder() {
         updateVisibility(1);
-        mImageView.setImageResource(R.drawable.loading);
+        mImageView.setImageResource(R.drawable.logo);
     }
 
     private void updateVisibility(int mediaType) {

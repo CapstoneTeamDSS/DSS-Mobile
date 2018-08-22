@@ -111,20 +111,7 @@ public class ControlFragment extends Fragment {
             }
             mVideoPaths.put("area_" + areaId, mediaSrcList);
             mPlaylistItemLists.put("area_" + areaId, playlistItemList);
-            if(mVideoPaths.size() == 0 || mPlaylistItemLists.size() == 0){
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        int boxId = PreferenceUtil.getBoxId(mContext);
-                        if (boxId == PreferenceUtil.DEFAULT_BOX_ID) {
-                            Intent intent = new Intent(mContext, BoxActivity.class);
-                            startActivity(intent);
-                        } else {
-                            ApiData.getDataFromAPI(mContext, boxId, true);
-                        }
-                    }
-                }, TimeUnit.MINUTES.toMillis(1));
-            }
+
         }
     }
 
