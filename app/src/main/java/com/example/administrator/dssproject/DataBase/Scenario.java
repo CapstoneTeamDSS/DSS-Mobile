@@ -7,6 +7,7 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import com.example.administrator.dssproject.Model.ScenarioDTO;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "scenario",
@@ -35,17 +36,21 @@ public class Scenario {
     @ColumnInfo(name = "audio_area")
     private int audioArea;
 
-    @ColumnInfo(name = "add_time")
-    private long addTime;
+    public Scenario(ScenarioDTO dto) {
+        this.scenarioId = dto.getScenarioId();
+        this.title = dto.getTitle();
+        this.scenarioUpdateDateTime = dto.getScenUpdate();
+        this.layoutId = dto.getLayoutId();
+        this.audioArea = dto.getAudioArea();
+    }
 
-
-    public Scenario(int scenarioId, String title, long scenarioUpdateDateTime, int layoutId, int audioArea,  long addTime) {
+    public Scenario(int scenarioId, String title, long scenarioUpdateDateTime, int layoutId, int audioArea) {
         this.scenarioId = scenarioId;
         this.title = title;
         this.scenarioUpdateDateTime = scenarioUpdateDateTime;
         this.layoutId = layoutId;
         this.audioArea = audioArea;
-        this.addTime = addTime;
+
     }
 
     public int getScenarioId() {
@@ -70,14 +75,6 @@ public class Scenario {
 
     public void setLayoutId(int layoutId) {
         this.layoutId = layoutId;
-    }
-
-    public long getAddTime() {
-        return addTime;
-    }
-
-    public void setAddTime(long addTime) {
-        this.addTime = addTime;
     }
 
     public int getAudioArea() {

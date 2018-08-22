@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static void getLayout(ControlFragment.ScheduleInfo scheduleInfo) {
+    public static void replaceFragment(ControlFragment.ScheduleInfo scheduleInfo) {
         Fragment fragment = ControlFragment.newInstance(scheduleInfo);
         MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
                 .addToBackStack(null).commitAllowingStateLoss();

@@ -1,7 +1,9 @@
 package com.example.administrator.dssproject.API;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.administrator.dssproject.DataBase.Area;
@@ -39,6 +41,8 @@ public class ApiData {
     private static int mBoxId;
     private static Context mContext;
     private static boolean mCheckAppStatus;
+    private static Scenario sCurrentScenario;
+    private static List<MediaSrc> mSources = new ArrayList<>();
 
     public static void getDataFromAPI(final Context context, int boxId, boolean checkAppStatus) {
         mBoxId = boxId;
@@ -54,7 +58,7 @@ public class ApiData {
         Call<ScheduleDTO> call = api.getScenarioByBoxId(mBoxId);
         call.enqueue(new Callback<ScheduleDTO>() {
             @Override
-            public void onResponse(Call<ScheduleDTO> call, Response<ScheduleDTO> response) {
+            public void onResponse(@NonNull Call<ScheduleDTO> call, @NonNull Response<ScheduleDTO> response) {
                 ScheduleDTO scheduleAPI = response.body();
                 if (scheduleAPI != null) {
                     extractMedia(scheduleAPI, mCheckAppStatus);
@@ -69,7 +73,7 @@ public class ApiData {
             }
 
             @Override
-            public void onFailure(Call<ScheduleDTO> call, Throwable t) {
+            public void onFailure(@NonNull Call<ScheduleDTO> call, @NonNull Throwable t) {
                 Log.e(TAG, "" + call);
             }
         });
@@ -89,7 +93,7 @@ public class ApiData {
             }, TimeUnit.MINUTES.toMillis(1));
         } else {
             try {
-                new DownloadTask(mContext, scenarioDTO.getScenarioId(), startTime, endTime).execute();
+                new DownloadTask(mContext, mSources, scenarioDTO.getScenarioId(), startTime, endTime).execute();
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
@@ -153,6 +157,8 @@ public class ApiData {
 
     private static boolean checkDuplicateScenario(int id, int layoutId) {
         boolean check = false;
+        MainActivity.myAppDatabase.scenarioDAO().getAScenario(id);
+
         List<Scenario> scenariosList = MainActivity.myAppDatabase.scenarioDAO().getScenarios();
         for (int m = 0; m < scenariosList.size(); m++) {
             if (id == scenariosList.get(m).getScenarioId() && layoutId == scenariosList.get(m).getLayoutId()) {
@@ -184,80 +190,76 @@ public class ApiData {
         return check;
     }
 
-    private static boolean getAPIData(ScenarioDTO scenarioDTO, boolean checkAppStatus) { //return true: downnload va chieu lai; return false: chieu tiep
-        boolean updateCheck = false;
+    /**
+     *
+     * @param scenarioDTO
+     * @param checkAppStatus
+     * @return if data has been changed or not
+     */
+    private static boolean getAPIData(ScenarioDTO scenarioDTO, boolean checkAppStatus) {
         int scenarioId = scenarioDTO.getScenarioId();
-        long scenarioUpdateDateTime = scenarioDTO.getScenUpdate();
         int layoutId = scenarioDTO.getLayoutId();
-        String title = scenarioDTO.getTitle();
-        int audioArea = scenarioDTO.getAudioArea();
-        long addTime = System.currentTimeMillis();
 
         //Insert Layout to sqlite
         Layout layout = new Layout(layoutId);
         insertLayout(layout, layoutId);
 
+        boolean updateCheck;
         //Scenario business part
-        Scenario scenario = new Scenario(scenarioId, title, scenarioUpdateDateTime, layoutId, audioArea, addTime);
-        try {
-            boolean checkScenarioDuplicated = checkDuplicateScenario(scenarioId, layoutId);
-            Scenario currentShowingScenario = MainActivity.myAppDatabase.scenarioDAO().getLastScenario();
-            if (!checkScenarioDuplicated) {
+        Scenario scenario = new Scenario(scenarioDTO);
+        if (sCurrentScenario != null && scenario.getScenarioId() == sCurrentScenario.getScenarioId()) {
+            updateCheck = updateIfChanged(scenario, scenarioDTO, sCurrentScenario);
+        } else {
+            boolean isStored = checkDuplicateScenario(scenarioId, layoutId);
+            if (!isStored) {
                 MainActivity.myAppDatabase.scenarioDAO().addScenario(scenario);
+                sCurrentScenario = scenario;
                 insertDataFromScenarioDTO(scenarioDTO);
                 return true;
             } else {
-                Scenario existedScenario = null;
-                if (currentShowingScenario.getScenarioId() == scenarioId) {//xac dinh Scenario vua nhan co giong cai hien tai ko
-                    existedScenario = currentShowingScenario;
-
-                } else {
-                    existedScenario = MainActivity.myAppDatabase.scenarioDAO().getAScenario(scenarioId);
-                    updateForThisScenario(scenarioDTO);
-                    updateCheck = true;
-                }
-                if (scenarioUpdateDateTime != existedScenario.getScenarioUpdateDateTime()) {//xac dinh time Update co thay doi ko
-                    if (currentShowingScenario.getScenarioId() == scenarioId) {
-                        updateCheck = true;
-                    }
-                    updateScenario(scenario, scenarioDTO);
-                } else {//update area khi có update playlist
-                    List<Integer> playlistIdList = MainActivity.myAppDatabase.scenarioItemDAO().getPlaylistsOfScenarioByScenarioId(scenarioId);
-                    List<PlaylistDTO> playlistDTOList = getPlaylistDTOList(scenarioDTO);
-//                    List<ScenarioItemDTO> apiPlaylistList = scenarioDTO.getScenarioItems();
-                    for (int playlistId : playlistIdList) {
-                        Playlist playlist = MainActivity.myAppDatabase.playlistDAO().getAPlaylist(playlistId);
-                        for (PlaylistDTO apiPlaylist : playlistDTOList) {
-                            if(playlist.getPlaylistId() == apiPlaylist.getPlaylistId()){
-                                if (apiPlaylist.getPlaylistUpdateDateTime() != playlist.getPlaylistUpdate()) {
-                                    if (currentShowingScenario.getScenarioId() == scenarioId) {
-                                        updateCheck = true;
-                                    }
-                                    long playlistUpdateDateTime = apiPlaylist.getPlaylistUpdateDateTime();
-                                    Playlist newPlaylist = new Playlist(playlistId, playlistUpdateDateTime);
-                                    updatePlaylist(scenarioDTO, newPlaylist);
-                                }
-                            }
-                        }
-                    }
-                }
+                Scenario scenarioDb = MainActivity.myAppDatabase.scenarioDAO().getAScenario(scenarioId);
+                updateIfChanged(scenario, scenarioDTO, scenarioDb);
+                updateCheck = true;
             }
-            if (!checkAppStatus) {
-
-                return true;
-            }
-        } catch (Exception e) {
-            Log.e(TAG + "Scenario", e.toString());
         }
-//        insertDataFromScenarioDTO(scenarioDTO);
-
+        if(!checkAppStatus){
+            return true;
+        }
         return updateCheck;
     }
 
-    private static void updateForThisScenario(ScenarioDTO scenarioDTO) {
-        MainActivity.myAppDatabase.scenarioItemDAO().deleteScenarioItemByScenarioId(scenarioDTO.getScenarioId());
-        insertNewScenarioItems(scenarioDTO);
+    private static boolean updateIfChanged(Scenario newScenario, ScenarioDTO scenarioDTO, Scenario oldScenario) {
+        boolean isChanged = false;
+
+        // scenario
+        if (newScenario.getScenarioUpdateDateTime() != oldScenario.getScenarioUpdateDateTime()) {
+            isChanged = true;
+            updateScenario(newScenario, scenarioDTO);
+        }
+
+        // playlist
+        int newId = newScenario.getScenarioId();
+        List<Integer> playlistIdList = MainActivity.myAppDatabase.scenarioItemDAO().getPlaylistsOfScenarioByScenarioId(newId);
+        List<PlaylistDTO> playlistDTOList = getPlaylistDTOList(scenarioDTO);
+        for (int playlistId : playlistIdList) {
+            Playlist playlist = MainActivity.myAppDatabase.playlistDAO().getAPlaylist(playlistId);
+            for (PlaylistDTO apiPlaylist : playlistDTOList) {
+                if (playlist.getPlaylistId() == apiPlaylist.getPlaylistId()) {
+                    if (apiPlaylist.getPlaylistUpdateDateTime() != playlist.getPlaylistUpdate()) {
+                        if (sCurrentScenario.getScenarioId() == newId) {
+                            isChanged = true;
+                        }
+                        long playlistUpdateDateTime = apiPlaylist.getPlaylistUpdateDateTime();
+                        Playlist newPlaylist = new Playlist(playlistId, playlistUpdateDateTime);
+                        updatePlaylist(scenarioDTO, newPlaylist);
+                    }
+                }
+            }
+        }
+
+        return isChanged;
     }
+
 
     private static void insertLayout(Layout layout, int layoutId) {
         try {
@@ -356,6 +358,8 @@ public class ApiData {
         MediaSrc mediaSrc = new MediaSrc(mediaSrcId, titleMedia, typeId, url, extension, "F", hashCode, "L");
         insertMediaSrc(mediaSrc, mediaSrcId, url, titleMedia, typeId, extension);
 
+        mSources.add(mediaSrc);
+
         //Insert PlaylistItem in sqlite
         int playlistItemId = playlistItemDTO.getPlaylistItemId();
         int displayOrderPlaylistItem = playlistItemDTO.getDisplayOrder();
@@ -414,16 +418,16 @@ public class ApiData {
         }
     }
 
-    private static void insertNewAreas(ScenarioDTO scenarioDTO){
-        int layoutId = scenarioDTO.getLayoutId();
-        for (int i = 0; i < scenarioDTO.getScenarioItems().size(); i++) {
-            ScenarioItemDTO scenarioItemDTO = scenarioDTO.getScenarioItems().get(i);
-            int areaId = scenarioItemDTO.getAreaId();
-            int visualType = scenarioItemDTO.getVisualTypeId();
-            Area area = new Area(areaId, layoutId, visualType);
-            insertArea(area, areaId, layoutId);
-        }
-    }
+//    private static void insertNewAreas(ScenarioDTO scenarioDTO){
+//        int layoutId = scenarioDTO.getLayoutId();
+//        for (int i = 0; i < scenarioDTO.getScenarioItems().size(); i++) {
+//            ScenarioItemDTO scenarioItemDTO = scenarioDTO.getScenarioItems().get(i);
+//            int areaId = scenarioItemDTO.getAreaId();
+//            int visualType = scenarioItemDTO.getVisualTypeId();
+//            Area area = new Area(areaId, layoutId, visualType);
+//            insertArea(area, areaId, layoutId);
+//        }
+//    }
 
     private static void insertNewPlaylistItems(ScenarioDTO scenarioDTO, Playlist playlist) {
         List<ScenarioItemDTO> scenarioItemDTOList = new ArrayList<>();
@@ -447,6 +451,8 @@ public class ApiData {
                 MediaSrc mediaSrc = new MediaSrc(mediaSrcId, titleMedia, typeId, url, extension, "F", hashCode, "L");
                 insertMediaSrc(mediaSrc, mediaSrcId, url, titleMedia, typeId, extension);
 
+                mSources.add(mediaSrc);
+
                 if (playlistId == playlist.getPlaylistId()) {
                     int playlistItemId = playlistItemDTO.getPlaylistItemId();
                     int displayOrderPlaylistItem = playlistItemDTO.getDisplayOrder();
@@ -461,9 +467,12 @@ public class ApiData {
     }
 
     private static void updateScenario(Scenario scenario, ScenarioDTO scenarioDTO) {
-        MainActivity.myAppDatabase.scenarioDAO().updateScenario(scenario); //Step 1: Update Scenario Info
-        MainActivity.myAppDatabase.scenarioItemDAO().deleteScenarioItemByScenarioId(scenario.getScenarioId()); //STEP2: delete all scenarioItems
-        insertNewScenarioItems(scenarioDTO);//STEP3: insert new sceario Item
+        MainActivity.myAppDatabase.scenarioDAO().updateScenario(scenario);
+        sCurrentScenario = scenario;
+        MainActivity.myAppDatabase.scenarioItemDAO().deleteScenarioItemByScenarioId(scenario.getScenarioId());
+        List<PlaylistDTO> playlistDTOList = getPlaylistDTOList(scenarioDTO);
+
+        insertNewScenarioItems(scenarioDTO);
     }
 
     private static void updatePlaylist(ScenarioDTO scenarioDTO, Playlist playlist) {
@@ -471,7 +480,7 @@ public class ApiData {
         int rowDelete;
         try {
             rowDelete = MainActivity.myAppDatabase.playlistItemDAO().deletePlaylistItemByPlaylistId(playlist.getPlaylistId());
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
 

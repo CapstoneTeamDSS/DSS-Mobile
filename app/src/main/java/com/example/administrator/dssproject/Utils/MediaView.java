@@ -1,7 +1,6 @@
 package com.example.administrator.dssproject.Utils;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -102,14 +101,15 @@ public class MediaView extends FrameLayout {
         }
     }
 
-    private void showNextMedia() {
+    private void showNextMedia() {// chưa check dc nếu area đó ko có media source sẽ
         if(mSources.size() == 0){
             showPlaceholder();
+            return;
         }
         if(mCurIndex == mSources.size()){
             mCurIndex = 0;
         }
-        MediaSrc source = mSources.get(mCurIndex);
+        MediaSrc source = mSources.get(mCurIndex);//java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
         switch (source.getTypeID()) {
             case 1:
                 // image
@@ -172,7 +172,7 @@ public class MediaView extends FrameLayout {
             StringBuilder builder = new StringBuilder();
             for (MediaSrc source : mSources){
                 String path = source.getUrlLocal();
-                String filename = Supporter.getNameFile(path);
+                String filename = Supporter.getFileName(path);
                 String folder = Supporter.getPathFolder(path);
                 String text = readTextFromFile(folder, filename);
                 builder.append(text);

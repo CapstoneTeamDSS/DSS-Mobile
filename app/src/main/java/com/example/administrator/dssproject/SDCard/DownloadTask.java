@@ -2,95 +2,65 @@ package com.example.administrator.dssproject.SDCard;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import com.example.administrator.dssproject.DataBase.MediaSrc;
-import com.example.administrator.dssproject.Fragment.ControlFragment;
+import com.example.administrator.dssproject.Fragment.ControlFragment.ScheduleInfo;
 import com.example.administrator.dssproject.MainActivity;
 import com.example.administrator.dssproject.Utils.Supporter;
 
-import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadTask extends AsyncTask<Void, Void, Void> {
     private static final String TAG = "DownloadTask";
-    private boolean downloadCompelete = false;
-    private Context context;
-    private List<MediaSrc> mediaSrcs;
+    private WeakReference<Context> mContext;
+    private List<MediaSrc> mSources;
 
     private final int mScenarioId;
     private final long mStartTime;
     private final long mEndTime;
 
-    public DownloadTask(Context context, int scenarioId, long startTime, long endTime) {
-        this.context = context;
+    public DownloadTask(Context context, List<MediaSrc> sources, int scenarioId, long startTime, long endTime) {
+        mContext = new WeakReference<>(context);
+        mSources = sources;
+
         mStartTime = startTime;
         mEndTime = endTime;
         mScenarioId = scenarioId;
     }
 
-    File apkStorage = null;
-    File outputFile = null;
-
     @Override
     protected Void doInBackground(Void... arg0) {
-        List<MediaSrc> listMedia = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
-        List<MediaSrc> downloadQueue = new ArrayList<MediaSrc>();
-        for (int m = 0; m < listMedia.size(); m++) {
-            if (listMedia.get(m).getUrlLocal().equals("F")) {
-                try {
-                    downloadQueue.add(listMedia.get(m));
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                }
-
-            }
-        }
-        for (int i = 0; i < downloadQueue.size(); i++) {
-            String urlLocal = Supporter.savingDataToSDCard(context, apkStorage, downloadQueue.get(i).getUrl(),
-                    downloadQueue.get(i).getTitle(), downloadQueue.get(i).getExtension());
-            downloadQueue.get(i).setUrlLocal(urlLocal);
+        Context context = mContext.get();
+        if (context == null) {
+            return null;
         }
 
-        for (int i = 0; i < downloadQueue.size(); i++) {
-            MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrc(downloadQueue.get(i));
-        }
+        List<MediaSrc> downloadQueue = getDownloadQueue();
+        for (MediaSrc source : downloadQueue) {
+            String urlLocal = Supporter.saveDataToSDCard(context, source.getUrl(), source.getTitle(), source.getExtension());
+            source.setUrlLocal(urlLocal);
 
-//        listMedia = MainActivity.myAppDatabase.mediaSrcDAO().getMediaSrc();
+            MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrc(source);
+        }
 
         int layoutId = MainActivity.myAppDatabase.scenarioDAO().getAScenario(mScenarioId).getLayoutId();
-        MainActivity.getLayout(new ControlFragment.ScheduleInfo(mScenarioId, layoutId, mStartTime, mEndTime));
-
+        ScheduleInfo info = new ScheduleInfo(mScenarioId, layoutId, mStartTime, mEndTime);
+        MainActivity.replaceFragment(info);
 
         return null;
     }
 
-    //Go to waiting fragment
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-//            MainActivity.fragmentManager.beginTransaction().add(R.id.fragment_container, new HomeFragment()).commit();
-
-    }
-    //go to assigned fragment by LayoutId
-    @Override
-    protected void onPostExecute(Void avoid) {
-        super.onPostExecute(avoid);
-//            Schedule schedule = MainActivity.myAppDatabase.scheduleDAO().getASchedule(ScheduleQueue.scheduleId);
-//            int layoutId = schedule.getLayoutId();
-//            switch (layoutId) {
-//                case 1:
-//                    MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new Portriat9x16Fragment()).
-//                            addToBackStack(null).commit();
-//                    break;
-//                case 29:
-//                    MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new Landscape16x9Fragment()).
-//                            addToBackStack(null).commit();
-//                    break;
-//                default:
-//            }
-
+    @NonNull
+    private List<MediaSrc> getDownloadQueue() {
+        List<MediaSrc> queue = new ArrayList<>();
+        for (MediaSrc source : mSources) {
+            if (source.getUrlLocal().equals("F")) {
+                queue.add(source);
+            }
+        }
+        return queue;
     }
 }

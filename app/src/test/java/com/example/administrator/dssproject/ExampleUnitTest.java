@@ -1,5 +1,7 @@
 package com.example.administrator.dssproject;
 
+import com.example.administrator.dssproject.Utils.Supporter;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -14,4 +16,17 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
+    // code complete
+    // udacity
+
+    // mockito, roboelectic
+    // instrumentation test
+    /*@Test
+    public void getFileName() {
+        String input = "data/test/abc.txt";
+        assertEquals(Supporter.getFileName(input), "abc.txt");
+
+
+    }*/
 }

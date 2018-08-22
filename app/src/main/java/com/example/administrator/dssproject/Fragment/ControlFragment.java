@@ -152,8 +152,7 @@ public class ControlFragment extends Fragment {
                 for (MediaSrc m : mVideoPaths.get("area_" + areaId)) {
                     String md5 = fileToMD5(m.getUrlLocal());
                     if (!m.getHashCode().equals(md5)) {
-                        String localUrl = Supporter.savingDataToSDCard(getContext(), null,
-                                m.getUrl(), m.getTitle(), m.getExtension());
+                        String localUrl = Supporter.saveDataToSDCard(getContext(), m.getUrl(), m.getTitle(), m.getExtension());
                         m.setUrlLocal(localUrl);
                     }
                 }

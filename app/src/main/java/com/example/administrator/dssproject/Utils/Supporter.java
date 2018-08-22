@@ -24,25 +24,27 @@ public class Supporter {
 //    public static final String downloadVideo = "http://androhub.com/demo/demo.mp4";
 
 
-    public static String savingDataToSDCard(Context context, File apkStorage, String downloadUrl, String downloadFileName, String downloadTailFileName){
+    public static String saveDataToSDCard(Context context, String downloadUrl, String downloadFileName, String downloadTailFileName){
         String newUrl;
-        String pathname = Environment.getExternalStorageDirectory() + "/"
-                + Supporter.downloadDirectory;
+        String pathname = Environment.getExternalStorageDirectory() + "/" + downloadDirectory;
         try {
             URL url = new URL(downloadUrl);
             HttpURLConnection c = (HttpURLConnection) url.openConnection();
             c.setRequestMethod("GET");
             c.connect();
             if (c.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                Log.e(TAG, "Server returned HTTP " + c.getResponseCode()
-                        + " " + c.getResponseMessage());
+                Log.e(TAG, "Server returned HTTP " + c.getResponseCode() + " " + c.getResponseMessage());
             }
+
+            File apkStorage;
             if (CheckForSDCard.isExternalStorageWritable()) {
                 apkStorage = new File(
-                        Environment.getExternalStorageDirectory() + "/"
-                                + Supporter.downloadDirectory);
-            } else
+                        Environment.getExternalStorageDirectory() + "/" + Supporter.downloadDirectory);
+            } else {
                 Toast.makeText(context, "Oops!! There is no SD Card.", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
             if (!apkStorage.exists()) {
                 apkStorage.mkdir();
                 Log.e(TAG, "Directory Created.");
@@ -58,6 +60,7 @@ public class Supporter {
                 outputFile.createNewFile();
                 Log.e(TAG, "File Created");
             }
+
             Log.e("File download", outputFile.getAbsolutePath());
             FileOutputStream fos = new FileOutputStream(outputFile);//Get OutputStream for NewFile Location
             InputStream is = c.getInputStream();//Get InputStream for connection
@@ -79,41 +82,14 @@ public class Supporter {
     }
 
 
-    /*public static List<ScenarioItem> scenarioItemsSortByDisplayOrder(List<ScenarioItem> scenarioItemList){
-        Collections.sort(scenarioItemList);
-        return scenarioItemList;
-    }
 
-    public static List<PlaylistItem> playlistItemsSortByDisplayOrder(List<PlaylistItem> playlistItemList){
-        Collections.sort(playlistItemList);
-        return playlistItemList;
-    }*/
-
-
-    public static String getNameFile(String path){
-        String[] split = path.split("/");
-        StringBuilder sb = new StringBuilder();
-        /*for (int i = 0; i < split.length; i++) {
-            sb.append(split[split.length - 1]);
-            if (i != split.length - 1) {
-                sb.append(" ");
-            }
-        }*/
-        sb.append(split[split.length - 1]);
-        return sb.toString();
+    public static String getFileName(String path){
+        int lastSeparator = path.lastIndexOf("/");
+        return path.substring(lastSeparator + 1);
     }
 
     public static String getPathFolder(String path){
-        String[] split = path.split("/");
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < split.length-1; i++) {
-            sb.append(split[i]);
-            if (i != split.length - 1) {
-                sb.append("/");
-            }
-        }
-        return sb.toString();
+        int lastSeparator = path.lastIndexOf("/");
+        return path.substring(0, lastSeparator);
     }
-
-
 }
