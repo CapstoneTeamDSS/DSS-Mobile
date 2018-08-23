@@ -111,11 +111,10 @@ public class ControlFragment extends Fragment {
             }
             mVideoPaths.put("area_" + areaId, mediaSrcList);
             mPlaylistItemLists.put("area_" + areaId, playlistItemList);
-
         }
     }
 
-
+    //Check Hash Null
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -132,15 +131,16 @@ public class ControlFragment extends Fragment {
     }
 
     private class ShowMediaTask extends AsyncTask<Void, Void, Void> {
-
         @Override
         protected Void doInBackground(Void... arg0) {
             for (int areaId : mAreaIds)
                 for (MediaSrc m : mVideoPaths.get("area_" + areaId)) {
                     String md5 = fileToMD5(m.getUrlLocal());
-                    if (!m.getHashCode().equals(md5)) {
-                        String localUrl = Supporter.saveDataToSDCard(getContext(), m.getUrl(), m.getTitle(), m.getExtension());
-                        m.setUrlLocal(localUrl);
+                    if (m.getHashCode() != null) {
+                        if (!m.getHashCode().equals(md5)) {
+                            String localUrl = Supporter.saveDataToSDCard(getContext(), m.getUrl(), m.getTitle(), m.getExtension());
+                            m.setUrlLocal(localUrl);
+                        }
                     }
                 }
             return null;

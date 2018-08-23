@@ -65,7 +65,7 @@ public class ApiData {
                 if (scheduleAPI != null) {
                     extractMedia(scheduleAPI, mCheckAppStatus);
                 } else {
-                    
+
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
