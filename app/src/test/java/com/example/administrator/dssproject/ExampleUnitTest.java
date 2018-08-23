@@ -1,5 +1,6 @@
 package com.example.administrator.dssproject;
 
+import com.example.administrator.dssproject.Fragment.ControlFragment;
 import com.example.administrator.dssproject.Utils.Supporter;
 
 import org.junit.Test;
@@ -23,9 +24,9 @@ public class ExampleUnitTest {
     // mockito, roboelectic
     // instrumentation test
     /*@Test
-    public void getFileName() {
+    public void getMD5Code() {
         String input = "data/test/abc.txt";
-        assertEquals(Supporter.getFileName(input), "abc.txt");
+        assertEquals(get, "abc.txt");
 
 
     }*/

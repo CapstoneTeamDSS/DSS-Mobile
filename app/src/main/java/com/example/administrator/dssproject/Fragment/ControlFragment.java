@@ -135,13 +135,15 @@ public class ControlFragment extends Fragment {
         protected Void doInBackground(Void... arg0) {
             for (int areaId : mAreaIds)
                 for (MediaSrc m : mVideoPaths.get("area_" + areaId)) {
-                    String md5 = fileToMD5(m.getUrlLocal());
+                    checkMd5Code(m);
+                    /*String md5 = fileToMD5(m.getUrlLocal());
                     if (m.getHashCode() != null) {
                         if (!m.getHashCode().equals(md5)) {
                             String localUrl = Supporter.saveDataToSDCard(getContext(), m.getUrl(), m.getTitle(), m.getExtension());
                             m.setUrlLocal(localUrl);
+
                         }
-                    }
+                    }*/
                 }
             return null;
         }
@@ -263,5 +265,16 @@ public class ControlFragment extends Fragment {
             returnVal.append(Integer.toString((md5Byte & 0xff) + 0x100, 16).substring(1));
         }
         return returnVal.toString();
+    }
+
+    private void checkMd5Code(MediaSrc mediaSrc){
+        String md5 = fileToMD5(mediaSrc.getUrlLocal());
+        if (mediaSrc.getHashCode() != null) {
+            if (!mediaSrc.getHashCode().equals(md5)) {
+                String localUrl = Supporter.saveDataToSDCard(getContext(), mediaSrc.getUrl(), mediaSrc.getTitle(), mediaSrc.getExtension());
+                mediaSrc.setUrlLocal(localUrl);
+                checkMd5Code(mediaSrc);
+            }
+        }
     }
 }
