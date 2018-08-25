@@ -174,12 +174,12 @@ public class ControlFragment extends Fragment {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    int boxId = PreferenceUtil.getBoxId(mContext);
-                    if (boxId == PreferenceUtil.DEFAULT_BOX_ID) {
+                    String matchingCode = PreferenceUtil.getMatchingCode(mContext);
+                    if (matchingCode == PreferenceUtil.DEFAULT_BOX_ID) {
                         Intent intent = new Intent(mContext, BoxActivity.class);
                         startActivity(intent);
                     } else {
-                        ApiData.getDataFromAPI(mContext, boxId, true);
+                        ApiData.getDataFromAPI(mContext, matchingCode, true);
                     }
                 }
             }, TimeUnit.MINUTES.toMillis(1));

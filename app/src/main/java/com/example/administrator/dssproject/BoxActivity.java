@@ -30,8 +30,8 @@ public class BoxActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int boxId = Integer.parseInt(mEditText.getText().toString());
-                PreferenceUtil.saveBoxId(BoxActivity.this, boxId);
+                String matchingCode = mEditText.getText().toString();
+                PreferenceUtil.saveMatchingCode(BoxActivity.this, matchingCode);
 
                 /*String boxIdString = mEditText.getText().toString();
                 int boxId = Integer.parseInt(boxIdString);

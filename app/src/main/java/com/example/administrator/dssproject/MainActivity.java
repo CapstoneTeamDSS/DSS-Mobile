@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             findViewById(R.id.iv_placeholder).setVisibility(View.GONE);
+            findViewById(R.id.iv_placeholder_icon).setVisibility(View.GONE);
         }
     };
 
@@ -57,14 +58,14 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                int boxId = PreferenceUtil.getBoxId(MainActivity.this);
-                if (boxId == PreferenceUtil.DEFAULT_BOX_ID) {
+                String matchingCode = PreferenceUtil.getMatchingCode(MainActivity.this);
+                if (matchingCode.equals(PreferenceUtil.DEFAULT_BOX_ID)) {
                     Intent intent = new Intent(MainActivity.this, BoxActivity.class);
                     startActivity(intent);
                 } else {
                     boolean checkAppStatus = false;
                     PreferenceUtil.saveAppStatus(MainActivity.this, checkAppStatus);
-                    ApiData.getDataFromAPI(MainActivity.this, boxId, checkAppStatus);
+                    ApiData.getDataFromAPI(MainActivity.this, matchingCode, checkAppStatus);
                 }
 
                 /*List<Box> boxes = MainActivity.myAppDatabase.boxDAO().getBox();

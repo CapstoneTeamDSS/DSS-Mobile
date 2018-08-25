@@ -40,14 +40,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiData {
 
     final static String TAG = "Schedules";
-    private static int mBoxId;
+    private static String mMatchingCode;
     private static Context mContext;
     private static boolean mCheckAppStatus;
     private static Scenario sCurrentScenario;
     private static List<MediaSrc> mSources = new ArrayList<>();
 
-    public static void getDataFromAPI(final Context context, int boxId, boolean checkAppStatus) {
-        mBoxId = boxId;
+    public static void getDataFromAPI(final Context context, String matchingCode, boolean checkAppStatus) {
+        mMatchingCode = matchingCode;
         mContext = context;
         mCheckAppStatus = checkAppStatus;
         final Retrofit retrofit = new Retrofit.Builder()
@@ -57,7 +57,7 @@ public class ApiData {
         final Api api = retrofit.create(Api.class);
         Log.e(TAG, api.toString());
 
-        Call<ScheduleDTO> call = api.getScenarioByBoxId(mBoxId);
+        Call<ScheduleDTO> call = api.getScenarioByMatchingCode(mMatchingCode);
         call.enqueue(new Callback<ScheduleDTO>() {
             @Override
             public void onResponse(@NonNull Call<ScheduleDTO> call, @NonNull Response<ScheduleDTO> response) {
@@ -68,7 +68,7 @@ public class ApiData {
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            getDataFromAPI(context, mBoxId, mCheckAppStatus);
+                            getDataFromAPI(context, mMatchingCode, mCheckAppStatus);
                         }
                     }, TimeUnit.MINUTES.toMillis(1));
                 }
@@ -90,7 +90,7 @@ public class ApiData {
             new android.os.Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    getDataFromAPI(mContext, mBoxId, checkAppStatus);
+                    getDataFromAPI(mContext, mMatchingCode, checkAppStatus);
                 }
             }, TimeUnit.MINUTES.toMillis(1));
         } else {

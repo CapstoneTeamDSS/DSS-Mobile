@@ -4,22 +4,22 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class PreferenceUtil {
-    public static final int DEFAULT_BOX_ID = 0;
+    public static final String DEFAULT_BOX_ID = "";
 
-    private static final String SHARED_PREF_NAME = "myBox";
-    private static final String KEY_BOX_ID_PREF = "boxId";
+    private static final String SHARED_PREF_NAME = "myMachingCode";
+    private static final String KEY_BOX_ID_PREF = "machingCode";
     private static final String KEY_APP_STATUS_PREF = "appStatus";
 
-    public static void saveBoxId(Context context, int boxId) {
+    public static void saveMatchingCode(Context context, String matchingCode) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(KEY_BOX_ID_PREF, boxId);
+        editor.putString(KEY_BOX_ID_PREF, matchingCode);
         editor.apply();
     }
 
-    public static int getBoxId(Context context) {
+    public static String getMatchingCode(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getInt(KEY_BOX_ID_PREF, DEFAULT_BOX_ID);
+        return sharedPreferences.getString(KEY_BOX_ID_PREF, DEFAULT_BOX_ID);
     }
 
     public static void saveAppStatus(Context context, boolean appStatus) {

@@ -10,9 +10,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello_blank_portrait">Portrait</string>
     <string name="hello_blank_landscape">Landscape</string>
-    <string name="input_box">Please input BoxId</string>
+    <string name="input_box">Please input Matching Code</string>
     <string name="submit_box">Add</string>
     <string name="hint_text">Box Id</string>
     <string name="placeholder">Placeholder</string>
-    <string name="box_fragment">Please Input BoxId</string>
+    <string name="box_fragment">Please input Matching Code</string>
 </resources>
