@@ -50,6 +50,7 @@ public class ApiData {
         mMatchingCode = matchingCode;
         mContext = context;
         mCheckAppStatus = checkAppStatus;
+
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Api.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -85,6 +86,7 @@ public class ApiData {
         long startTime = scheduleAPI.getStartTime();
         long endTime = scheduleAPI.getEndTime();
         ScenarioDTO scenarioDTO = scheduleAPI.getScenario();
+        mSources.clear();
         boolean checkUpdate = getAPIData(scenarioDTO, checkAppStatus);
         if (!checkUpdate) {
             new android.os.Handler().postDelayed(new Runnable() {
@@ -211,6 +213,7 @@ public class ApiData {
         Scenario scenario = new Scenario(scenarioDTO);
         if (sCurrentScenario != null && scenario.getScenarioId() == sCurrentScenario.getScenarioId()) {
             updateCheck = updateIfChanged(scenario, scenarioDTO, sCurrentScenario);
+            sCurrentScenario = scenario;
         } else {
             boolean isStored = checkDuplicateScenario(scenarioId, layoutId);
             if (!isStored) {
@@ -228,6 +231,7 @@ public class ApiData {
             sCurrentScenario = scenario;
             return true;
         }
+        sCurrentScenario = scenario;
         return updateCheck;
     }
 
@@ -329,19 +333,20 @@ public class ApiData {
         }
     }
 
-    private static void insertMediaSrc(MediaSrc mediaSrc, int mediaSrcId, String url, String titleMedia, int typeId, String extension) {
+    private static void  insertMediaSrc(MediaSrc mediaSrc, int mediaSrcId, String url, String titleMedia, int typeId, String extension) {
         String urlLocal = "F";
         try {
             boolean checkMediaSrc = checkDuplicateMediaSrc(mediaSrcId);
             if (!checkMediaSrc) {
                 MainActivity.myAppDatabase.mediaSrcDAO().addMediaSrc(mediaSrc);
+
             } else {
                 if (checkAndGetDuplicateMediaSrc(mediaSrcId).getUrl().equals(url)) {
                     urlLocal = checkAndGetDuplicateMediaSrc(mediaSrcId).getUrlLocal();
-                    MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrcExceptLocalUrl(mediaSrcId, titleMedia, typeId, url, extension, urlLocal, "L");
+                    MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrcExceptLocalUrl(mediaSrcId, titleMedia, typeId, url, extension, urlLocal, 0);
                 } else {
                     urlLocal = "F";
-                    MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrcExceptLocalUrl(mediaSrcId, titleMedia, typeId, url, extension, urlLocal, "L");
+                    MainActivity.myAppDatabase.mediaSrcDAO().updateMediaSrcExceptLocalUrl(mediaSrcId, titleMedia, typeId, url, extension, urlLocal, 0);
                 }
             }
         } catch (Exception e) {
@@ -358,11 +363,11 @@ public class ApiData {
         String url = playlistItemDTO.getUrlMedia();
         String extension = playlistItemDTO.getExtensionMedia();
         String hashCode = playlistItemDTO.getHashCode();
-        MediaSrc mediaSrc = new MediaSrc(mediaSrcId, titleMedia, typeId, url, extension, "F", hashCode, "L");
+        MediaSrc mediaSrc = new MediaSrc(mediaSrcId, titleMedia, typeId, url, extension, "F", hashCode, 0);
         insertMediaSrc(mediaSrc, mediaSrcId, url, titleMedia, typeId, extension);
-
-        mSources.add(mediaSrc);
-
+        if(!checkDuplicateMediaSrc(mSources, mediaSrcId)){
+            mSources.add(mediaSrc);
+        }
         //Insert PlaylistItem in sqlite
         int playlistItemId = playlistItemDTO.getPlaylistItemId();
         int displayOrderPlaylistItem = playlistItemDTO.getDisplayOrder();
@@ -394,7 +399,8 @@ public class ApiData {
         insertScenarioItem(scenarioItem, scenarioId, playlistId, layoutId, areaId);
     }
 
-    private static void insertDataFromScenarioDTO(ScenarioDTO scenarioDTO) {//remove area
+    private static void insertDataFromScenarioDTO(ScenarioDTO scenarioDTO) {
+//        MainActivity.myAppDatabase.scenarioItemDAO().deleteAll();
         int layoutId = scenarioDTO.getLayoutId();
         for (int j = 0; j < scenarioDTO.getScenarioItems().size(); j++) {
             ScenarioItemDTO scenarioItemDTO = scenarioDTO.getScenarioItems().get(j);
@@ -465,10 +471,13 @@ public class ApiData {
                 String url = playlistItemDTO.getUrlMedia();
                 String extension = playlistItemDTO.getExtensionMedia();
                 String hashCode = playlistItemDTO.getHashCode();
-                MediaSrc mediaSrc = new MediaSrc(mediaSrcId, titleMedia, typeId, url, extension, "F", hashCode, "L");
+                MediaSrc mediaSrc = new MediaSrc(mediaSrcId, titleMedia, typeId, url, extension, "F", hashCode, 0);
                 insertMediaSrc(mediaSrc, mediaSrcId, url, titleMedia, typeId, extension);
 
-                mSources.add(mediaSrc);
+                if(!checkDuplicateMediaSrc(mSources, mediaSrcId)){
+                    mSources.add(mediaSrc);
+                }
+
 
                 if (playlistId == playlist.getPlaylistId()) {
                     int playlistItemId = playlistItemDTO.getPlaylistItemId();
@@ -529,6 +538,16 @@ public class ApiData {
         }
 
         return playlistDTOList;
+    }
+
+    private static boolean checkDuplicateMediaSrc(List<MediaSrc> mediaSrcList, int mediaSrcId){
+        boolean check = false;
+        for (MediaSrc media: mediaSrcList) {
+            if(media.getMediaSrcID() == mediaSrcId){
+                return true;
+            }
+        }
+        return check;
     }
 
 

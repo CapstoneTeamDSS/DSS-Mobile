@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,9 +82,14 @@ public class ControlFragment extends Fragment {
         }
 
         List<ScenarioItem> scenarioItemListDB = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemListByScenarioId(mScheduleInfo.scenarioId);
-        for (ScenarioItem item : scenarioItemListDB) {
-            int areaId = item.getAreaId();
-            List<ScenarioItem> items = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemListByAreaId(areaId);
+        for (int areaId : mAreaIds) {
+            List<ScenarioItem> items = new ArrayList<>();
+            for (ScenarioItem item : scenarioItemListDB) {
+                if(item.getAreaId() == areaId){
+                    items.add(item);
+                }
+//            List<ScenarioItem> items = MainActivity.myAppDatabase.scenarioItemDAO().getScenarioItemListByAreaId(areaId);//wrong
+            }
             scenarioItemLists.put("area_" + areaId, items);
         }
 
@@ -106,12 +112,16 @@ public class ControlFragment extends Fragment {
                 playlistItemList.addAll(playlistItemListDB);
                 for (PlaylistItem playlistItem : playlistItemListDB) {
                     MediaSrc mediaSrc = MainActivity.myAppDatabase.mediaSrcDAO().getAMediaSrcByPlaylistItemId(playlistItem.getPlaylistItemId());
+                    mediaSrc.setLastUsed(System.currentTimeMillis());
                     mediaSrcList.add(mediaSrc);
                 }
             }
             mVideoPaths.put("area_" + areaId, mediaSrcList);
             mPlaylistItemLists.put("area_" + areaId, playlistItemList);
+
+
         }
+
     }
 
     //Check Hash Null
@@ -267,10 +277,11 @@ public class ControlFragment extends Fragment {
         return returnVal.toString();
     }
 
-    private void checkMd5Code(MediaSrc mediaSrc){
+    private void checkMd5Code(MediaSrc mediaSrc) {
         String md5 = fileToMD5(mediaSrc.getUrlLocal());
         if (mediaSrc.getHashCode() != null) {
             if (!mediaSrc.getHashCode().equals(md5)) {
+                Log.e("MD5: ", "AAAA");
                 String localUrl = Supporter.saveDataToSDCard(getContext(), mediaSrc.getUrl(), mediaSrc.getTitle(), mediaSrc.getExtension());
                 mediaSrc.setUrlLocal(localUrl);
                 checkMd5Code(mediaSrc);

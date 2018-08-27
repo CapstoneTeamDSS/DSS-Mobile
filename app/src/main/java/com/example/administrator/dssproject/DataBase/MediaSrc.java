@@ -34,9 +34,9 @@ public class MediaSrc {
     private String hashCode;
 
     @ColumnInfo(name = "media_last_use")
-    private String lastUsed;
+    private long lastUsed;
 
-    public MediaSrc(int mediaSrcID, String title, int typeID, String url, String extension, String urlLocal, String hashCode, String lastUsed) {
+    public MediaSrc(int mediaSrcID, String title, int typeID, String url, String extension, String urlLocal, String hashCode, long lastUsed) {
         this.mediaSrcID = mediaSrcID;
         this.title = title;
         this.typeID = typeID;
@@ -100,11 +100,11 @@ public class MediaSrc {
         this.urlLocal = urlLocal;
     }
 
-    public String getLastUsed() {
+    public long getLastUsed() {
         return lastUsed;
     }
 
-    public void setLastUsed(String lastUsed) {
+    public void setLastUsed(long lastUsed) {
         this.lastUsed = lastUsed;
     }
 
